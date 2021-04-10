@@ -1,27 +1,28 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
+	name: "The Tree of Trials",
+	id: "trials",
+	author: "micro",
 	pointsName: "points",
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Literally something",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.1</h3><br>
+		- the tree exists now<br>
+		- added 2 challenges and some upgrades<br>
+		- thats it`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `youre done pog`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -38,10 +39,21 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
-
 	let gain = new Decimal(1)
+	if (!(player.u.upgrades.includes(14))) {
+		if (player.u.upgrades.includes(11)) {gain = gain.add(tmp.u.upgrades[11].effect)}
+		if (player.u.upgrades.includes(12)) {gain = gain.add(tmp.u.upgrades[12].effect)}
+	}
+	if (player.t.challenges[12]) {gain = gain.add(player.t.challenges[12])}
+	if (player.u.upgrades.includes(21)) {gain = gain.mul(tmp.u.upgrades[21].effect)}
+	if (player.t.activeChallenge === 12) {gain = gain.sqr()}
+
+	if (player.t.challenges[11]) {gain = gain.mul(Decimal.pow(2, player.t.challenges[11]))}
+	if (player.u.upgrades.includes(14)) {gain = gain.mul(tmp.u.upgrades[14].effect)}
+	if (player.u.upgrades.includes(15)) {gain = gain.mul(tmp.u.upgrades[15].effect)}
+	if (player.mu.upgrades.includes(11)) {gain = gain.sqr()}
+
+	if (player.t.activeChallenge === 12) {gain = gain.div(player.u.upgrades.length ? player.u.upgrades.length**2 : 1)}
 	return gain
 }
 
@@ -55,9 +67,8 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.t.challenges[12] > 3
 }
-
 
 
 // Less important things beyond this point!
