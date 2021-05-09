@@ -18,8 +18,6 @@ addLayer("q", {
     exponent: function() {return player.q.best.div(100).add(1)},
     base: 2,
     buyables: {
-        rows: 1,
-        cols: 3,
         11: {
             title: "Up Quark",
             cost(x) {return new Decimal(1)},
@@ -109,8 +107,6 @@ addLayer("q", {
         }
     },
     upgrades: {
-        rows: 2,
-        cols: 5,
         11: {
             fullDisplay() {
                 return `<h3>Positivity</h3><br>
