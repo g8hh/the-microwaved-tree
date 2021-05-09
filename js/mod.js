@@ -1,26 +1,26 @@
 let modInfo = {
-	name: "The Tree of Trials",
-	id: "trials",
+	name: "The Chemistree 2",
+	id: "chem2",
 	author: "micro",
 	pointsName: "points",
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	initialStartPoints: new Decimal(0), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Literally something",
+	num: "0.0",
+	name: "start",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1</h3><br>
+	<h3>v0.0</h3><br>
 		- the tree exists now<br>
-		- added 2 challenges and some upgrades<br>
-		- thats it`
+		- added stuff until 10th quark upgrade<br>
+		- next up: leptons and alignment charts<br>`
 
 let winText = `youre done pog`
 
@@ -40,20 +40,25 @@ function canGenPoints(){
 // Calculate points/sec!
 function getPointGen() {
 	let gain = new Decimal(1)
-	if (!(player.u.upgrades.includes(14))) {
-		if (player.u.upgrades.includes(11)) {gain = gain.add(tmp.u.upgrades[11].effect)}
-		if (player.u.upgrades.includes(12)) {gain = gain.add(tmp.u.upgrades[12].effect)}
+	gain = gain.add(tmp.q.buyables[11].effect)
+	gain = gain.add(tmp.q.buyables[12].effect[0])
+
+	if (player.q.upgrades.includes(12)) {
+		gain = gain.mul(tmp.q.upgrades[12].effect)
 	}
-	if (player.t.challenges[12]) {gain = gain.add(player.t.challenges[12])}
-	if (player.u.upgrades.includes(21)) {gain = gain.mul(tmp.u.upgrades[21].effect)}
-	if (player.t.activeChallenge === 12) {gain = gain.sqr()}
 
-	if (player.t.challenges[11]) {gain = gain.mul(Decimal.pow(2, player.t.challenges[11]))}
-	if (player.u.upgrades.includes(14)) {gain = gain.mul(tmp.u.upgrades[14].effect)}
-	if (player.u.upgrades.includes(15)) {gain = gain.mul(tmp.u.upgrades[15].effect)}
-	if (player.mu.upgrades.includes(11)) {gain = gain.sqr()}
-
-	if (player.t.activeChallenge === 12) {gain = gain.div(player.u.upgrades.length ? player.u.upgrades.length**2 : 1)}
+	if (player.q.upgrades.includes(14)) {
+		gain = gain.pow(tmp.q.upgrades[14].effect)
+	}
+	if (player.q.upgrades.includes(23)) {
+		gain = gain.pow(1.5)
+	}
+	if (player.q.upgrades.includes(24)) {
+		gain = gain.pow(1.5)
+	}
+	if (player.q.buyables[13].gte(1)) {
+		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
+	}
 	return gain
 }
 
@@ -67,7 +72,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.t.challenges[12] > 3
+	return false
 }
 
 
