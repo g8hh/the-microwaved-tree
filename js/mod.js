@@ -56,6 +56,9 @@ function getPointGen() {
 	if (player.q.upgrades.includes(24)) {
 		gain = gain.pow(1.5)
 	}
+	if (player.l.unlocked) {
+		gain = gain.pow(tmp.l.effect[4])
+	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
 	}

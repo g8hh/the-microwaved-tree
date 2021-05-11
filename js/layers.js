@@ -9,22 +9,39 @@ addLayer("q", {
     color: "#234567",
     row: 0,
     resource: "quarks",
+    hotkeys: [
+        {
+            key: "q",
+            description: "q: reset your points for quarks",
+            onPress() { if (player.q.unlocked) doReset("q") }
+        }
+    ],
     symbol: "Q",
     position: 0,
     type: "static",
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal(1),
-    exponent: function() {return player.q.best.div(100).add(1)},
+    exponent: function() {
+        let exp = player.q.best.div(100).add(1)
+        if (player.l.unlocked) {
+            exp = exp.mul(tmp.l.effect[3])
+        }
+        return exp
+    },
     base: 2,
+    autoPrestige() {return player.q.upgrades.includes(31)},
     buyables: {
         11: {
             title: "Up Quark",
             cost(x) {return new Decimal(1)},
             effect(x) {
-                let gain = player.q.buyables[11]
+                let gain = new Decimal(player.q.buyables[11])
                 if (player.q.upgrades.includes(11)) {
-                    gain *= 3
+                    gain = gain.mul(3)
+                }
+                if (player.l.unlocked) {
+                    gain = gain.pow(tmp.l.effect[1])
                 }
                 return gain
             },
@@ -34,7 +51,7 @@ addLayer("q", {
                 Currently: ${tmp.q.buyables[11].effect.toPrecision(3)}
                 Amount: ${player.q.buyables[11]}`
             },
-            canAfford() {return player.q.points.sub(player.q.spent).gte(1)},
+            canAfford() {return player.q.points.sub(player.q.spent).gte(1) && player.q.buyables[11].lt(100)},
             buy() {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[11] = player.q.buyables[11].add(1)
@@ -51,10 +68,23 @@ addLayer("q", {
                 let cap = new Decimal(100).mul(player.q.buyables[12])
                 let gain = player.points.div(1000).mul(player.q.buyables[12]).sub(player.q.buyables[12])
                 if (player.q.upgrades.includes(22) && gain.gte(cap) && cap.gte(1)) {
-                    gain = gain.log10().mul(cap)
+                    let logbase = 10
+                    if (player.q.upgrades.includes(31)) {
+                        logbase -= 8.75
+                    }
+                    if (player.q.upgrades.includes(32)) {
+                        logbase -= 0.2
+                    }
+                    if (player.q.upgrades.includes(33)) {
+                        logbase -= 0.04
+                    }
+                    gain = gain.log(logbase).mul(cap)
                 }
                 else {
                     gain = gain.min(cap)
+                }
+                if (player.l.unlocked) {
+                    gain = gain.mul(tmp.l.effect[2])
                 }
                 if (player.q.upgrades.includes(13)) {
                     gain = gain.mul(tmp.q.upgrades[13].effect)
@@ -67,7 +97,7 @@ addLayer("q", {
                 Currently: ${tmp.q.buyables[12].effect[0].toPrecision(3)}
                 Amount: ${player.q.buyables[12]}`
             },
-            canAfford() {return player.q.points.sub(player.q.spent).gte(1)},
+            canAfford() {return player.q.points.sub(player.q.spent).gte(1) && player.q.buyables[12].lt(100)},
             buy() {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[12] = player.q.buyables[12].add(1)
@@ -223,13 +253,73 @@ addLayer("q", {
         25: {
             fullDisplay() {
                 return `<h3>Lairs and Leptons</h3><br>
-                Unlocks [a cool thing thats coming later]<br>
+                Unlocks leptons.<br>
                 Cost: 1e18 points`
             },
             unlocked() {return player.q.upgrades.includes(24)},
             canAfford() {return player.points.gte(1e18)},
             pay() {
                 player.points = player.points.sub(1e18)
+            }
+        },
+        31: {
+            fullDisplay() {
+                return `<h3>Full Auto</h3><br>
+                Quarks are automatically bought and down quark's softcap is weaker.<br>
+                Cost: 1e36 points`
+            },
+            unlocked() {return player.l.points.gte(11)},
+            canAfford() {return player.points.gte(1e36)},
+            pay() {
+                player.points = player.points.sub(1e36)
+            }
+        },
+        32: {
+            fullDisplay() {
+                return `<h3>Unoriginal</h3><br>
+                Down quark's softcap is weaker again.<br>
+                Cost: 2.5e41 points`
+            },
+            unlocked() {return player.q.upgrades.includes(31)},
+            canAfford() {return player.points.gte(2.5e41)},
+            pay() {
+                player.points = player.points.sub(2.5e41)
+            }
+        },
+        33: {
+            fullDisplay() {
+                return `<h3>This is the final one i promise</h3><br>
+                Down quark's softcap is weaker yet again.<br>
+                Cost: 2.5e44 points`
+            },
+            unlocked() {return player.q.upgrades.includes(32)},
+            canAfford() {return player.points.gte(2.5e44)},
+            pay() {
+                player.points = player.points.sub(2.5e44)
+            }
+        },
+        34: {
+            fullDisplay() {
+                return `<h3>No more unoriginality</h3><br>
+                The lepton effect is squared.<br>
+                Cost: 1e48 points`
+            },
+            unlocked() {return player.q.upgrades.includes(33)},
+            canAfford() {return player.points.gte(1e48)},
+            pay() {
+                player.points = player.points.sub(1e48)
+            }
+        },
+        35: {
+            fullDisplay() {
+                return `<h3>I lied</h3><br>
+                Unlocks [something cool].<br>
+                Cost: 1e90 points`
+            },
+            unlocked() {return player.l.points.gte(20)},
+            canAfford() {return player.points.gte(1e90)},
+            pay() {
+                player.points = player.points.sub(1e90)
             }
         }
     },
@@ -242,5 +332,132 @@ addLayer("q", {
         "prestige-button",
         "buyables",
         "upgrades"
+    ]
+})
+addLayer("l", {
+    name: "leptons",
+    startData() {return {
+        unlocked: false,
+		points: new Decimal(0),
+        best: new Decimal(0),
+        law: new Decimal(0),
+        chaos: new Decimal(0),
+        good: new Decimal(0),
+        evil: new Decimal(0),
+        neutral: new Decimal(0),
+        alignments: new Decimal(0),
+        cap: new Decimal(1)
+    }},
+    color: "#654321",
+    row: 0,
+    resource: "leptons",
+    effect() {
+        let strength = player.l.points.sqrt().add(2).log2().sqrt()
+        if (player.q.upgrades.includes(34)) {
+            strength = strength.sqr()
+        }
+        let al1 = new Decimal(2).mul(player.l.law.gte(1) ? player.l.law : new Decimal(0.5)).pow(strength)
+        let al2 = new Decimal(10).pow(player.l.chaos).pow(strength)
+        let al3 = new Decimal(0.5).pow(player.l.good.sqrt()).pow(strength.sqrt())
+        let al4 = new Decimal(1.25).mul(player.l.evil.gte(1) ? player.l.evil : new Decimal(0.8)).pow(strength)
+        return [strength, al1, al2, al3, al4]
+    },
+    effectDescription: function() {return `which are boosting alignment boosts by ^${tmp.l.effect[0].toPrecision(3)}`},
+    layerShown() {return player.q.upgrades.includes(25)},
+    symbol: "L",
+    position: 1,
+    branches: ["q"],
+    type: "static",
+    baseResource: "points",
+    baseAmount() {return player.points},
+    requires: new Decimal(1e18),
+    exponent: function() {return player.l.best.div(100).add(1).sqr()},
+    base: function() {return player.l.best.div(10).add(10)},
+    clickables: {
+        11: {
+            title: "Lawful Good",
+            display() {return `Currently: ${player.l.clickables[11] ? player.l.clickables[11] : "Inactive"}`},
+            unlocked() {return player.l.unlocked},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[11] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.law = player.l.law.add(1)
+                player.l.good = player.l.good.add(1)
+                player.l.clickables[11] = "Active"
+            }
+        },
+        13: {
+            title: "Lawful Evil",
+            display() {return `Currently: ${player.l.clickables[13] ? player.l.clickables[13] : "Inactive"}`},
+            unlocked() {return player.l.unlocked},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[13] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.law = player.l.law.add(1)
+                player.l.evil = player.l.evil.add(1)
+                player.l.clickables[13] = "Active"
+            }
+        },
+        31: {
+            title: "Chaotic Good",
+            display() {return `Currently: ${player.l.clickables[31] ? player.l.clickables[31] : "Inactive"}`},
+            unlocked() {return player.l.unlocked},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[31] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.chaos = player.l.chaos.add(1)
+                player.l.good = player.l.good.add(1)
+                player.l.clickables[31] = "Active"
+            }
+        },
+        33: {
+            title: "Chaotic Evil",
+            display() {return `Currently: ${player.l.clickables[33] ? player.l.clickables[33] : "Inactive"}`},
+            unlocked() {return player.l.unlocked},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[33] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.chaos = player.l.chaos.add(1)
+                player.l.evil = player.l.evil.add(1)
+                player.l.clickables[33] = "Active"
+            }
+        },
+        masterButtonPress() {
+            player.l.alignments = new Decimal(0)
+            player.l.law = new Decimal(0)
+            player.l.chaos = new Decimal(0)
+            player.l.good = new Decimal(0)
+            player.l.evil = new Decimal(0)
+            player.l.clickables[11] = "Inactive"
+            player.l.clickables[13] = "Inactive"
+            player.l.clickables[31] = "Inactive"
+            player.l.clickables[33] = "Inactive"
+        },
+        masterButtonText: "Respec alignments",
+        showMasterButton() {return player.l.unlocked}
+    },
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        [
+            "display-text",
+            function() {
+                return `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[1].toPrecision(3)}</h2>th power<br>
+                You have <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${player.l.chaos}</h2> chaos, which is multiplying down quark's effect by <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[2].toPrecision(3)}</h2><br>
+                You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${tmp.l.effect[3].toPrecision(3)}</h2><br>
+                You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[4].toPrecision(3)}</h2>th power<br>
+                You can have ${player.l.cap} alignments at a time<br>`
+            },
+            function() {return player.l.unlocked ? {} : {"display": "none"}}
+        ],
+        "clickables"
     ]
 })
