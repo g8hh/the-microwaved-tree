@@ -14,7 +14,17 @@ addLayer("q", {
         {
             key: "q",
             description: "q: reset your points for quarks",
-            onPress() { if (player.q.unlocked) doReset("q") }
+            onPress() { if (player.q.unlocked && canReset("q")) doReset("q") }
+        },
+        {
+            key: "U",
+            description: "shift+u: buys up quarks",
+            onPress() { if (player.q.unlocked && tmp.q.buyables[11].canAfford) tmp.q.buyables[11].buy() }
+        },
+        {
+            key: "D",
+            description: "shift+d: buys down quarks",
+            onPress() { if (player.q.unlocked && tmp.q.buyables[12].canAfford) tmp.q.buyables[12].buy() }
         }
     ],
     symbol: "Q",
@@ -460,6 +470,18 @@ addLayer("l", {
     color: "#654321",
     row: 0,
     resource: "leptons",
+    hotkeys: [
+        {
+            key: "l",
+            description: "l: reset your points for leptons",
+            onPress() { if (player.l.unlocked && canReset("l")) doReset("l") }
+        },
+        {
+            key: "r",
+            description: "r: respec lepton alignments",
+            onPress() { if (player.l.unlocked) tmp.l.clickables.masterButtonPress() }
+        }
+    ],
     effect() {
         let strength = player.l.points.sqrt().add(2).log2().sqrt()
         if (player.q.upgrades.includes(34)) {
@@ -668,6 +690,13 @@ addLayer("a", {
     color: "#420420",
     row: 1,
     resource: "atoms",
+    hotkeys: [
+        {
+            key: "a",
+            description: "a: reset your points for atoms",
+            onPress() { if (player.a.unlocked && canReset("a")) doReset("a") }
+        }
+    ],
     effect() {
         let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2))))
         if (eff.gte(0.009999)) {
