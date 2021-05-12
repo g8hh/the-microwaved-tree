@@ -61,6 +61,15 @@ function setClickableState(layer, id, state) {
 	player[layer].clickables[id] = state
 }
 
+
+function getGridData(layer, id) {
+	return (player[layer].grid[id])
+}
+
+function setGridData(layer, id, data) {
+	player[layer].grid[id] = data
+}
+
 function upgradeEffect(layer, id) {
 	return (tmp[layer].upgrades[id].effect)
 }
@@ -80,6 +89,11 @@ function clickableEffect(layer, id) {
 function achievementEffect(layer, id) {
 	return (tmp[layer].achievements[id].effect)
 }
+
+function gridEffect(layer, id) {
+	return (gridRun(layer, 'getEffect', player[layer].grid[id], id))
+}
+
 
 function canAffordPurchase(layer, thing, cost) {
 
@@ -172,6 +186,14 @@ function clickClickable(layer, id) {
 	updateClickableTemp(layer)
 }
 
+function clickGrid(layer, id) {
+	if (!player[layer].unlocked) return
+	if (!run(layers[layer].grid.getUnlocked, layers[layer].grid, id)) return
+	if (!gridRun(layer, 'getCanClick', player[layer].grid[id], id)) return
+
+	gridRun(layer, 'onClick', player[layer].grid[id], id)
+}
+
 // Function to determine if the player is in a challenge
 function inChallenge(layer, id) {
 	let challenge = player[layer].activeChallenge
@@ -195,8 +217,10 @@ function showTab(name) {
 	player.tab = name
 	if (player.navTab == "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) player.lastSafeTab = name
 	delete player.notify[name]
+	updateTabFormats()
 	needCanvasUpdate = true
 	document.activeElement.blur()
+
 }
 
 function showNavTab(name) {
@@ -205,6 +229,7 @@ function showNavTab(name) {
 	var toTreeTab = name == "tree"
 	player.navTab = name
 	player.notify[name] = false
+	updateTabFormats()
 	needCanvasUpdate = true
 }
 
@@ -425,10 +450,19 @@ function adjustPopupTime(diff) {
 }
 
 function run(func, target, args = null) {
-	if (!!(func && func.constructor && func.call && func.apply)) {
+	if (isFunction(func)) {
 		let bound = func.bind(target)
 		return bound(args)
 	}
 	else
 		return func;
+}
+
+function gridRun(layer, func, data, id) {
+	if (isFunction(layers[layer].grid[func])) {
+		let bound = layers[layer].grid[func].bind(layers[layer].grid)
+		return bound(data, id)
+	}
+	else
+		return layers[layer].grid[func];
 }
