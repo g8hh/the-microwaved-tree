@@ -1,3 +1,4 @@
+function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms))}
 addLayer("q", {
     name: "quarks",
     startData() {return {
@@ -29,6 +30,9 @@ addLayer("q", {
         }
         if (player.q.best.gte(1000)) {
             exp  = exp.mul(2)
+        }
+        if (player.q.best.gte(1100)) {
+            exp  = exp.mul(player.q.best.div(1100))
         }
         return exp
     },
@@ -391,13 +395,39 @@ addLayer("q", {
         45: {
             fullDisplay() {
                 return `<h3>Muwuonic</h3><br>
-                Unlocks [a cool new thing that doesn't exist yet no its not a layer dont get your hopes up]<br>
+                Unlocks muons.<br>
                 Cost: e7,500,000 points`
             },
             unlocked() {return player.q.upgrades.includes(44)},
             canAfford() {return player.points.gte("e7500000")},
             pay() {
                 player.points = player.points.sub("e7500000")
+            }
+        },
+        51: {
+            fullDisplay() {
+                return `<h3>The unoriginality is back baby</h3><br>
+                Point gain is increased based on points.<br>
+                Cost: e185,534,014 points
+                Currently: ^${tmp.q.upgrades[51].effect.toPrecision(3)}`
+            },
+            effect() {return player.points.add(10).slog().div(2)},
+            unlocked() {return player.q.upgrades.includes(44)},
+            canAfford() {return player.points.gte("e185534014")},
+            pay() {
+                player.points = player.points.sub("e185534014")
+            }
+        },
+        55: {
+            fullDisplay() {
+                return `<h3>Nooo, you can't just break the pattern of the unlocking upgrade being the fifth</h3><br>
+                Unlocks [something cool]<br>
+                Cost: e9104627203 points`
+            },
+            unlocked() {return player.l.challenges[13] === 1},
+            canAfford() {return player.points.gte("e9104627203")},
+            pay() {
+                player.points = player.points.sub("e9104627203")
             }
         }
     },
@@ -424,7 +454,8 @@ addLayer("l", {
         evil: new Decimal(0),
         neutral: new Decimal(0),
         alignments: new Decimal(0),
-        cap: new Decimal(1)
+        cap: new Decimal(1),
+        comps: new Decimal(0)
     }},
     color: "#654321",
     row: 0,
@@ -433,6 +464,15 @@ addLayer("l", {
         let strength = player.l.points.sqrt().add(2).log2().sqrt()
         if (player.q.upgrades.includes(34)) {
             strength = strength.sqr()
+        }
+        if (player.l.challenges[11] === 1) {
+            strength = strength.mul(1.25)
+        }
+        if (player.l.activeChallenge === 11) {
+            strength = strength.sqrt()
+        }
+        if (player.l.activeChallenge === 13) {
+            strength = new Decimal(1)
         }
         let al1 = new Decimal(2).mul(player.l.law.gte(1) ? player.l.law : new Decimal(0.5)).pow(strength)
         let al2 = new Decimal(10).pow(player.l.chaos).pow(strength)
@@ -463,7 +503,17 @@ addLayer("l", {
         if (player.a.milestones.includes("2")) {
             cap += 1
         }
+        if (player.l.challenges[13] == 1) {
+            cap += 1
+        }
         player.l.cap = new Decimal(cap)
+    },
+    challengeCompletions() {
+        let comps = 0
+        for ([key, value] of Object.entries(player.l.challenges)) {
+            comps += value
+        }
+        player.l.comps = new Decimal(comps)
     },
     clickables: {
         11: {
@@ -536,30 +586,84 @@ addLayer("l", {
         masterButtonText: "Respec alignments",
         showMasterButton() {return player.l.unlocked}
     },
-    tabFormat: [
-        "main-display",
-        "prestige-button",
-        [
-            "display-text",
-            function() {
-                return `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[1].toPrecision(3)}</h2>th power<br>
-                You have <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${player.l.chaos}</h2> chaos, which is multiplying down quark's effect by <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[2].toPrecision(3)}</h2><br>
-                You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${tmp.l.effect[3].toPrecision(3)}</h2><br>
-                You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[4].toPrecision(3)}</h2>th power<br>
-                You can have ${player.l.cap} alignments at a time<br>`
-            },
-            function() {return player.l.unlocked ? {} : {"display": "none"}}
-        ],
-        "clickables"
-    ]
+    challenges: {
+        11: {
+            name: "Type-1",
+            challengeDescription: "The lepton effect is square rooted.",
+            goalDescription: "983,000 points per second",
+            canComplete() {return getPointGen().gte(983000)},
+            rewardDescription: "The lepton effect is multiplied by 1.25.",
+            unlocked() {return player.q.upgrades.includes(45)},
+            onEnter() {
+                player.points = new Decimal(0)
+            }
+        },
+        12: {
+            name: "Type-2",
+            challengeDescription: "Point gain before simulation log ^^0.1",
+            goalDescription: "500,000,000 points",
+            canComplete() {return player.points.gte(500000000)},
+            rewardDescription: "Base point gain x6.9e69",
+            unlocked() {return player.l.challenges[11] === 1},
+            onEnter() {
+                player.points = new Decimal(0)
+            }
+        },
+        13: {
+            name: "Type-3",
+            challengeDescription: "Lepton effect is always 1 and point gain after simulation log ^^0.5",
+            goalDescription: "100,000 points",
+            canComplete() {return player.points.gte(100000)},
+            rewardDescription: "You can choose one more alignment",
+            unlocked() {return player.l.challenges[12] === 1},
+            onEnter() {
+                player.points = new Decimal(0)
+            }
+        }
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                "main-display",
+                "prestige-button",
+                [
+                    "display-text",
+                    function() {
+                        return `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[1].toPrecision(3)}</h2>th power<br>
+                        You have <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${player.l.chaos}</h2> chaos, which is multiplying down quark's effect by <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[2].toPrecision(3)}</h2><br>
+                        You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${tmp.l.effect[3].toPrecision(3)}</h2><br>
+                        You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[4].toPrecision(3)}</h2>th power<br>
+                        You can have ${player.l.cap} alignments at a time<br>`
+                    },
+                    function() {return player.l.unlocked ? {} : {"display": "none"}}
+                ],
+                "clickables"
+            ]
+        },
+        "Muons": {
+            content: [
+                [
+                    "display-text",
+                    function() {
+                        return `You have ${player.l.comps} completed particle simulations, boosting point gain by ^${new Decimal(1.01).pow(player.l.comps).toPrecision(3)}<br>
+                        In simulations, point gain is equal to log10(base point gain)`
+                    }
+                ],
+                "challenges"
+            ],
+            unlocked: false
+        }
+    },
+    thisIsTheStupidestThingIveEverDoneInMyEntireLife() {
+        tmp.l.tabFormat.Muons.unlocked = player.q.upgrades.includes(45)
+    }
 })
 addLayer("a", {
     name: "atoms",
     startData() {return {
         unlocked: false,
 		points: new Decimal(0),
-        best: new Decimal(0),
-        total: new Decimal(0)
+        best: new Decimal(0)
     }},
     color: "#420420",
     row: 1,
@@ -586,22 +690,22 @@ addLayer("a", {
         0: {
             requirementDescription: "2 atoms",
             effectDescription: "Always have the first two rows of quark upgrades and down quarks' softcap's log base ^0.02.",
-            done() {return player.a.points.gte(2)}
+            done() {return player.a.best.gte(2)}
         },
         1: {
             requirementDescription: "5 atoms",
             effectDescription: "Always have all quark upgrades and point gain ^1.01 per atom.",
-            done() {return player.a.points.gte(5)}
+            done() {return player.a.best.gte(5)}
         },
         2: {
             requirementDescription: "7 atoms",
             effectDescription: "You can have two alignments at a time, quarks don't reset anything and point gain ^1.0001 per quark.",
-            done() {return player.a.points.gte(7)}
+            done() {return player.a.best.gte(7)}
         },
         3: {
             requirementDescription: "20 atoms",
             effectDescription: "Keep leptons on reset and point gain ^1.05 per lepton.",
-            done() {return player.a.points.gte(20)}
+            done() {return player.a.best.gte(20)}
         }
     }
 })

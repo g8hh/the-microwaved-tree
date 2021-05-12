@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "no one will ever see v0.1 name",
+	num: "0.3",
+	name: "does anyone actually look at these? if you see this then good for you",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -29,7 +29,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- neutral alignments don't exist lol<br>
 		- but atoms do<br>
 		- added stuff until 20th quark upgrade<br>
-		- next up: something actually interesting maybe<br>`
+		- next up: something actually interesting maybe<br>
+	<h3>v0.3</h3><br>
+		- tricked and fooled you ill never add interesting things<br>
+		- mu(wu)ons exist now<br>
+		- added stuff until 22th quark upgrade<br>
+		- next up: the thing i planned in v0.1<br>`
 
 let winText = `youre done pog`
 
@@ -49,11 +54,14 @@ function canGenPoints(){
 // Calculate points/sec!
 function getPointGen() {
 	let gain = new Decimal(1)
-	gain = gain.add(tmp.q.buyables[11].effect)
+    gain = gain.add(tmp.q.buyables[11].effect)
 	gain = gain.add(tmp.q.buyables[12].effect[0])
 
 	if (player.q.upgrades.includes(12)) {
 		gain = gain.mul(tmp.q.upgrades[12].effect)
+	}
+	if (player.l.challenges[12] === 1) {
+		gain = gain.mul(6.9e69)
 	}
 
 	if (player.q.upgrades.includes(14)) {
@@ -92,9 +100,24 @@ function getPointGen() {
 	if (player.q.upgrades.includes(44)) {
 		gain = gain.pow(1.017100171)
 	}
+	if (player.q.upgrades.includes(45)) {
+		gain = gain.pow(new Decimal(1.01).pow(player.l.comps))
+	}
+	if (player.q.upgrades.includes(51)) {
+		gain = gain.pow(tmp.q.upgrades[51].effect)
+	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
 	}
+	if (player.l.activeChallenge === 12) {
+		gain = gain.tetrate(0.1)
+	}
+	if (!!(player.l.activeChallenge)) {
+		gain = gain.log10()
+	}
+	if (player.l.activeChallenge === 13) {
+		gain = gain.tetrate(0.5)
+	} 
 	return gain
 }
 
