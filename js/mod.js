@@ -12,15 +12,24 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "start",
+	num: "0.2",
+	name: "no one will ever see v0.1 name",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.0</h3><br>
 		- the tree exists now<br>
 		- added stuff until 10th quark upgrade<br>
-		- next up: leptons and alignment charts<br>`
+		- next up: leptons and alignment charts<br>
+	<h3>v0.1</h3><br>
+		- leptons exist now<br>
+		- added stuff until 15th quark upgrade<br>
+		- next up: net neutrality<br>
+	<h3>v0.2</h3><br>
+		- neutral alignments don't exist lol<br>
+		- but atoms do<br>
+		- added stuff until 20th quark upgrade<br>
+		- next up: something actually interesting maybe<br>`
 
 let winText = `youre done pog`
 
@@ -59,6 +68,30 @@ function getPointGen() {
 	if (player.l.unlocked) {
 		gain = gain.pow(tmp.l.effect[4])
 	}
+	if (player.q.upgrades.includes(35)) {
+		gain = gain.pow(1.11)
+	}
+	if (player.a.milestones.includes("1")) {
+		gain = gain.pow(new Decimal(1.01).pow(player.a.points))
+	}
+	if (player.a.milestones.includes("2")) {
+		gain = gain.pow(new Decimal(1.0001).pow(player.q.points))
+	}
+	if (player.a.milestones.includes("3")) {
+		gain = gain.pow(new Decimal(1.05).pow(player.l.points))
+	}
+	if (player.q.upgrades.includes(41)) {
+		gain = gain.pow(2)
+	}
+	if (player.q.upgrades.includes(42)) {
+		gain = gain.pow(3)
+	}
+	if (player.q.upgrades.includes(43)) {
+		gain = gain.pow(4)
+	}
+	if (player.q.upgrades.includes(44)) {
+		gain = gain.pow(1.017100171)
+	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
 	}
@@ -89,4 +122,12 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+}
+
+function addAlignments() {
+	player.l.law = new Decimal(1)
+    player.l.chaos = new Decimal(1)
+    player.l.good = new Decimal(1)
+    player.l.evil = new Decimal(1)
+	player.l.unlocked = true
 }

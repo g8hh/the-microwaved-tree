@@ -27,10 +27,23 @@ addLayer("q", {
         if (player.l.unlocked) {
             exp = exp.mul(tmp.l.effect[3])
         }
+        if (player.q.best.gte(1000)) {
+            exp  = exp.mul(2)
+        }
         return exp
     },
     base: 2,
     autoPrestige() {return player.q.upgrades.includes(31)},
+    doReset(layer) {
+        if (tmp[layer].row == 0) {return}
+        if (!(player.a.milestones.includes("1"))) {
+            player.q.upgrades = []
+            if (player.a.milestones.includes("0")) {
+                player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25]
+            }
+        }
+    },
+    resetsNothing: function() {return player.a.milestones.includes("2")},
     buyables: {
         11: {
             title: "Up Quark",
@@ -77,6 +90,12 @@ addLayer("q", {
                     }
                     if (player.q.upgrades.includes(33)) {
                         logbase -= 0.04
+                    }
+                    if (player.a.unlocked) {
+                        logbase -= tmp.a.effect
+                    }
+                    if (player.a.milestones.includes("0")) {
+                        logbase **= 0.02
                     }
                     gain = gain.log(logbase).mul(cap)
                 }
@@ -313,13 +332,72 @@ addLayer("q", {
         35: {
             fullDisplay() {
                 return `<h3>I lied</h3><br>
-                Unlocks [something cool].<br>
+                Unlocks atoms and point gain ^1.11.<br>
                 Cost: 1e90 points`
             },
             unlocked() {return player.l.points.gte(20)},
             canAfford() {return player.points.gte(1e90)},
             pay() {
                 player.points = player.points.sub(1e90)
+            }
+        },
+        41: {
+            fullDisplay() {
+                return `<h3>Four right angles</h3><br>
+                Point gain ^2.<br>
+                Cost: e56,950 points`
+            },
+            unlocked() {return player.q.points.gte(953)},
+            canAfford() {return player.points.gte("e56950")},
+            pay() {
+                player.points = player.points.sub("e56950")
+            }
+        },
+        42: {
+            fullDisplay() {
+                return `<h3>Eight wrong angles</h3><br>
+                Point gain ^3.<br>
+                Cost: e171,882 points`
+            },
+            unlocked() {return player.q.upgrades.includes(41)},
+            canAfford() {return player.points.gte("e171882")},
+            pay() {
+                player.points = player.points.sub("e171882")
+            }
+        },
+        43: {
+            fullDisplay() {
+                return `<h3>This is even more unoriginal</h3><br>
+                Point gain ^4.<br>
+                Cost: e951,762 points`
+            },
+            unlocked() {return player.q.upgrades.includes(42)},
+            canAfford() {return player.points.gte("e951762")},
+            pay() {
+                player.points = player.points.sub("e951762")
+            }
+        },
+        44: {
+            fullDisplay() {
+                return `<h3>You can probably guess what this does</h3><br><br>
+                Cost: e7,373,905 points`
+            },
+            unlocked() {return player.q.upgrades.includes(43)},
+            canAfford() {return player.points.gte("e7373905")},
+            pay() {
+                player.points = player.points.sub("e7373905")
+            }
+        },
+        45: {
+            fullDisplay() {
+                return `<h3>Muwuonic</h3><br>
+                Unlocks [a cool new thing that doesn't exist yet no its not a layer dont get your hopes up]<br>
+                Cost: e7,500,000 points`
+            },
+            unlocked() {return player.q.upgrades.includes(44)},
+            canAfford() {return player.points.gte("e7500000")},
+            pay() {
+                player.points = player.points.sub("e7500000")
             }
         }
     },
@@ -363,7 +441,7 @@ addLayer("l", {
         return [strength, al1, al2, al3, al4]
     },
     effectDescription: function() {return `which are boosting alignment boosts by ^${tmp.l.effect[0].toPrecision(3)}`},
-    layerShown() {return player.q.upgrades.includes(25)},
+    layerShown() {return player.q.upgrades.includes(25) || player.l.unlocked},
     symbol: "L",
     position: 1,
     branches: ["q"],
@@ -373,6 +451,20 @@ addLayer("l", {
     requires: new Decimal(1e18),
     exponent: function() {return player.l.best.div(100).add(1).sqr()},
     base: function() {return player.l.best.div(10).add(10)},
+    doReset(layer) {
+        if (tmp[layer].row == 0) {return}
+        if (!(player.a.milestones.includes("3"))) {
+            player.l.points = new Decimal(0)
+            player.l.best = new Decimal(0)
+        }
+    },
+    alignmentCap() {
+        let cap = 1
+        if (player.a.milestones.includes("2")) {
+            cap += 1
+        }
+        player.l.cap = new Decimal(cap)
+    },
     clickables: {
         11: {
             title: "Lawful Good",
@@ -460,4 +552,56 @@ addLayer("l", {
         ],
         "clickables"
     ]
+})
+addLayer("a", {
+    name: "atoms",
+    startData() {return {
+        unlocked: false,
+		points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0)
+    }},
+    color: "#420420",
+    row: 1,
+    resource: "atoms",
+    effect() {
+        let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2))))
+        if (eff.gte(0.009999)) {
+            eff = new Decimal(0.009999)
+        }
+        return eff
+    },
+    effectDescription: function() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)}`},
+    layerShown() {return player.q.upgrades.includes(35) || player.a.unlocked},
+    symbol: "A",
+    position: 0,
+    branches: ["q", "l"],
+    type: "static",
+    baseResource: "points",
+    baseAmount() {return player.points},
+    requires: new Decimal(1e100),
+    exponent: function() {return player.a.best.div(100).add(1).cube()},
+    base: function() {return player.a.best.add(100)},
+    milestones: {
+        0: {
+            requirementDescription: "2 atoms",
+            effectDescription: "Always have the first two rows of quark upgrades and down quarks' softcap's log base ^0.02.",
+            done() {return player.a.points.gte(2)}
+        },
+        1: {
+            requirementDescription: "5 atoms",
+            effectDescription: "Always have all quark upgrades and point gain ^1.01 per atom.",
+            done() {return player.a.points.gte(5)}
+        },
+        2: {
+            requirementDescription: "7 atoms",
+            effectDescription: "You can have two alignments at a time, quarks don't reset anything and point gain ^1.0001 per quark.",
+            done() {return player.a.points.gte(7)}
+        },
+        3: {
+            requirementDescription: "20 atoms",
+            effectDescription: "Keep leptons on reset and point gain ^1.05 per lepton.",
+            done() {return player.a.points.gte(20)}
+        }
+    }
 })
