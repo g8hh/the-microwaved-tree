@@ -94,6 +94,12 @@ addLayer("q", {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[11] = player.q.buyables[11].add(1)
             },
+            sellOne() {
+                if (player.q.buyables[11].gte(1)) {
+                    player.q.spent = player.q.spent.sub(1)
+                    player.q.buyables[11] = player.q.buyables[11].sub(1)
+                }
+            },
             sellAll() {
                 player.q.spent = player.q.spent.sub(player.q.buyables[11])
                 player.q.buyables[11] = new Decimal(0)
@@ -149,6 +155,12 @@ addLayer("q", {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[12] = player.q.buyables[12].add(1)
             },
+            sellOne() {
+                if (player.q.buyables[12].gte(1)) {
+                    player.q.spent = player.q.spent.sub(1)
+                    player.q.buyables[12] = player.q.buyables[12].sub(1)
+                }
+            },
             sellAll() {
                 player.q.spent = player.q.spent.sub(player.q.buyables[12])
                 player.q.buyables[12] = new Decimal(0)
@@ -176,6 +188,12 @@ addLayer("q", {
             buy() {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[13] = player.q.buyables[13].add(1)
+            },
+            sellOne() {
+                if (player.q.buyables[13].gte(1)) {
+                    player.q.spent = player.q.spent.sub(1)
+                    player.q.buyables[13] = player.q.buyables[13].sub(1)
+                }
             },
             sellAll() {
                 player.q.spent = player.q.spent.sub(player.q.buyables[13])
