@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "01100101 01100001 01110011 01110100 01100101 01110010 00100000 01100101 01100111 01100111",
+	num: "0.5",
+	name: "when will the jokes end",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -38,7 +38,12 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.4</h3><br>
 		- neutral alignments don't don't exist lol<br>
 		- added stuff until 5th atom upgrade<br>
-		- next up: does the word unoriginal even mean anything anymore tbh<br>`
+		- next up: does the word unoriginal even mean anything anymore tbh<br>
+	<h3>v0.5</h3><br>
+		- unoriginality exists now<br>
+		- added stuff until 5th unoriginality upgrade<br>
+		- im not really satisfied with this update tbh<br>
+		- next up: charm quarks. yep. just charm quarks. nothing else at all.<br>`
 
 let winText = `youre done pog`
 
@@ -118,6 +123,21 @@ function getPointGen() {
 	}
 	if (player.a.upgrades.includes(14)) {
 		gain = gain.pow(2)
+	}
+	if (player.a.upgrades.includes(15)) {
+		gain = gain.pow(new Decimal(2).mul(tmp.u.effect[1]))
+	}
+	if (player.u.unlocked) {
+		gain = gain.pow(tmp.u.effect[0])
+	}
+	if (player.u.milestones.includes("5")) {
+		gain = gain.pow(1.15)
+	}
+	if (player.u.upgrades.includes(11)) {
+		gain = gain.pow(tmp.q.buyables[13].effect[1].add(10).log10().add(9).log10())
+	}
+	if (player.u.upgrades.includes(13)) {
+		gain = gain.pow(new Decimal(0.99).pow(-0.99))
 	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])

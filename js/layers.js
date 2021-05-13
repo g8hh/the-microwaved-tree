@@ -58,10 +58,24 @@ addLayer("q", {
     autoPrestige() {return player.q.upgrades.includes(31)},
     doReset(layer) {
         if (tmp[layer].row == 0) {return}
-        if (!(player.a.milestones.includes("1"))) {
-            player.q.upgrades = []
-            if (player.a.milestones.includes("0")) {
-                player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25]
+        if (layer === "a") { 
+            if (!(player.a.milestones.includes("1"))) {
+                player.q.upgrades = []
+                if (player.a.milestones.includes("0")) {
+                    player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25]
+                }
+            }
+        }
+        if (layer === "u") { 
+            player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35]
+            if (player.u.milestones.includes("2")) {
+                player.q.upgrades.push(41, 42, 43, 44, 45)
+            }
+            if (player.u.milestones.includes("3")) {
+                player.q.upgrades.push(51, 55)
+            }
+            if (player.u.milestones.includes("4")) {
+                player.q.upgrades.push(52, 53, 54)
             }
         }
     },
@@ -176,6 +190,15 @@ addLayer("q", {
                     pow = pow.sqr()
                     mult = mult.mul(69)
                 }
+                if (player.u.upgrades.includes(11)) {
+                    pow = pow.tetrate(0.01)
+                }
+                if (player.u.upgrades.includes(12)) {
+                    mult = mult.pow(new Decimal(1).div(pow.min(1)))
+                }
+                if (player.u.upgrades.includes(14)) {
+                    pow = pow.sqrt()
+                }
                 return [pow, mult]
             },
             display() {
@@ -184,7 +207,7 @@ addLayer("q", {
                 Amount: ${player.q.buyables[13]}`
             },
             unlocked() {return player.q.upgrades.includes(15)},
-            canAfford() {return player.q.points.sub(player.q.spent).gte(1)},
+            canAfford() {return player.q.points.sub(player.q.spent).gte(1) && player.q.buyables[13].lt(1000)},
             buy() {
                 player.q.spent = player.q.spent.add(1)
                 player.q.buyables[13] = player.q.buyables[13].add(1)
@@ -600,6 +623,7 @@ addLayer("l", {
     requires: new Decimal(1e18),
     exponent: function() {return player.l.best.div(100).add(1).sqr()},
     base: function() {return player.l.best.div(10).add(10)},
+    autoPrestige() {return player.u.milestones.includes("5")},
     gainMult() {
         let mult = new Decimal(1)
         if (player.l.points.eq(118)) {
@@ -609,11 +633,21 @@ addLayer("l", {
     },
     doReset(layer) {
         if (tmp[layer].row == 0) {return}
-        if (!(player.a.milestones.includes("3"))) {
-            player.l.points = new Decimal(0)
-            player.l.best = new Decimal(0)
+        if (layer === "a") {
+            if (!(player.a.milestones.includes("3"))) {
+                player.l.points = new Decimal(0)
+                player.l.best = new Decimal(0)
+            }
+        }
+        if (layer === "u") { 
+            player.l.points = new Decimal(100).add(player.u.points).min(200)
+            player.l.best = new Decimal(100).add(player.u.points).min(200)
+            if (!(player.u.milestones.includes("3"))) {
+                tmp.l.clickables.masterButtonPress()
+            }
         }
     },
+    resetsNothing() {return player.u.milestones.includes("2")},
     alignmentCap() {
         let cap = 1
         if (player.a.milestones.includes("2")) {
@@ -991,7 +1025,7 @@ addLayer("a", {
         15: {
             fullDisplay() {
                 return `<h3>Unoriginaltrogen</h3><br>
-                Unlocks [something "unoriginal"]<br>
+                Unlocks [something "unoriginal"] and point gain ^2<br>
                 Req: 3,207 quarks<br>`
             },
             unlocked() {return player.a.upgrades.includes(14)},
@@ -1001,4 +1035,168 @@ addLayer("a", {
             }
         }
     }
+})
+addLayer("u", {
+    name: "unoriginality",
+    startData() {return {
+        unlocked: false,
+		points: new Decimal(0),
+        best: new Decimal(0),
+        exp: new Decimal(0)
+    }},
+    color: "#696969",
+    row: 1,
+    resource: function() {return `unoriginality^${player.u.unlocked ? player.u.exp.toPrecision(3) : 0}`},
+    hotkeys: [
+        {
+            key: "u",
+            description: "u: reset your points for unoriginality",
+            onPress() { if (player.a.unlocked && canReset("u")) doReset("u") }
+        }
+    ],
+    effect() {
+        let eff0 = player.u.points.add(10).log10()
+        let eff1 = new Decimal(1)
+        if (player.u.exp.gte(1)) {
+            eff1 = new Decimal(0.01).mul(player.u.points.add(2).log2()).mul(player.u.exp).add(1)
+        }
+        return [eff0, eff1]
+    },
+    effectDescription: function() {return `which is raising point gain to the ${tmp.u.effect[0].toPrecision(4)}th power`},
+    layerShown() {return player.a.upgrades.includes(15) || player.u.unlocked},
+    symbol: "U",
+    position: 1,
+    branches: ["q", "l"],
+    type: "static",
+    baseResource: "points",
+    baseAmount() {return player.points},
+    requires: new Decimal("ee20"),
+    exponent: function() {return player.u.best.add(1)},
+    base: function() {return new Decimal(10).pow(player.u.best.add(1))},
+    unExp() {
+        let exp = 0
+        if (player.u.milestones.includes("1")) {
+            exp += 1
+        }
+        player.u.exp = new Decimal(exp)
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 unoriginality",
+            effectDescription: "You keep leptons equal to 100 plus your unoriginality, up to 200, and keep the first 3 rows of quark upgrades.",
+            done() {return player.u.best.gte(1)}
+        },
+        1: {
+            requirementDescription: "2 unoriginality",
+            effectDescription: "Unoriginality exponent +1.",
+            done() {return player.u.best.gte(2)},
+            unlocked() {return player.u.milestones.includes("0")}
+        },
+        2: {
+            requirementDescription: "3 unoriginality",
+            effectDescription: "Keep the fourth row of upgrades, and leptons no longer reset anything.",
+            done() {return player.u.best.gte(3)},
+            unlocked() {return player.u.milestones.includes("1")}
+        },
+        3: {
+            requirementDescription: "5 unoriginality",
+            effectDescription: "Keep quark upgrades 51 and 55, and alignments are not reset.",
+            done() {return player.u.best.gte(5)},
+            unlocked() {return player.u.milestones.includes("2")}
+        },
+        4: {
+            requirementDescription: "10 unoriginality",
+            effectDescription: "Keep quark upgrades 52, 53 and 54.",
+            done() {return player.u.best.gte(10)},
+            unlocked() {return player.u.milestones.includes("3")}
+        },
+        5: {
+            requirementDescription: "15 unoriginality",
+            effectDescription: "Leptons are automatically bought, and point gain ^1.15",
+            done() {return player.u.best.gte(15)},
+            unlocked() {return player.u.milestones.includes("4")}
+        },
+        6: {
+            requirementDescription: "16 unoriginality",
+            effectDescription: "Unlock upgrades.",
+            done() {return player.u.best.gte(16)},
+            unlocked() {return player.u.milestones.includes("5")}
+        }
+    },
+    upgrades: {
+        11: {
+            fullDisplay() {
+                return `<h3>Stranger things</h3><br>
+                Strange quarks's negative effect ^^0.01, and its positive effect has an exponential component.<br>
+                Req: 267,000 points per second in a Type-3 simulation<br>`
+            },
+            unlocked() {return player.u.milestones.includes("6")},
+            canAfford() {return getPointGen().gte(267000) && player.l.activeChallenge === 13},
+            pay() {
+                return
+            }
+        },
+        12: {
+            fullDisplay() {
+                return `<h3>This upgrades is good i promise</h3><br>
+                Strange quarks's negative effect boosts its positive effect.<br>
+                Req: 300,000 points per second in a Type-3 simulation<br>`
+            },
+            unlocked() {return player.u.upgrades.includes(11)},
+            canAfford() {return getPointGen().gte(300000) && player.l.activeChallenge === 13},
+            pay() {
+                return
+            }
+        },
+        13: {
+            fullDisplay() {
+                return `<h3>Haha, wouldn't it be funny if unoriginality had an unoriginal upgrade?</h3><br>
+                Point gain ^(0.99^-0.99).<br>
+                Req: 3,254 quarks<br>`
+            },
+            unlocked() {return player.u.upgrades.includes(12)},
+            canAfford() {return player.q.points.gte(3254)},
+            pay() {
+                return
+            }
+        },
+        14: {
+            fullDisplay() {
+                return `<h3>[add witty upgrade name here]</h3><br>
+                Strange quark's negative effect is square rooted.<br>
+                Req: 304,000 points per second in a Type-3 simulation<br>`
+            },
+            unlocked() {return player.u.upgrades.includes(13)},
+            canAfford() {return getPointGen().gte(305000) && player.l.activeChallenge === 13},
+            pay() {
+                return
+            }
+        },
+        15: {
+            fullDisplay() {
+                return `<h3>Charm</h3><br>
+                Unlocks [a cool thing that you can probably guess]<br>
+                Req: e5.781e20 points per second<br>`
+            },
+            unlocked() {return player.u.upgrades.includes(14)},
+            canAfford() {return getPointGen().gte("ee20.76203338319")},
+            pay() {
+                return
+            }
+        }
+    },
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        [
+            "display-text",
+            function() {
+                return `Unoriginality exponent effects:<br>
+                <h3>Unoriginaltrogen</h3>'s second effect x${tmp.u.effect[1].toPrecision(4)}`
+            },
+            function() {return player.u.exp.gte(1) ? {} : {"display": "none"}}
+        ],
+        "milestones",
+        "upgrades"
+    ]
 })
