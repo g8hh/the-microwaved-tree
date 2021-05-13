@@ -1,4 +1,3 @@
-function sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms))}
 addLayer("q", {
     name: "quarks",
     startData() {return {
@@ -38,11 +37,20 @@ addLayer("q", {
         if (player.l.unlocked) {
             exp = exp.mul(tmp.l.effect[3])
         }
+        if (player.q.upgrades.includes(53)) {
+            exp = exp.mul(tmp.l.effect[6])
+        }
         if (player.q.best.gte(1000)) {
             exp  = exp.mul(2)
         }
         if (player.q.best.gte(1100)) {
             exp  = exp.mul(player.q.best.div(1100))
+        }
+        if (player.q.best.gte(2000)) {
+            exp  = exp.mul(player.q.best.div(1500))
+        }
+        if (player.q.best.gte(3000)) {
+            exp  = exp.pow(player.q.best.div(3000))
         }
         return exp
     },
@@ -69,6 +77,9 @@ addLayer("q", {
                 }
                 if (player.l.unlocked) {
                     gain = gain.pow(tmp.l.effect[1])
+                }
+                if (player.q.upgrades.includes(54)) {
+                    gain = gain.pow(tmp.l.effect[7])
                 }
                 return gain
             },
@@ -110,6 +121,9 @@ addLayer("q", {
                     }
                     if (player.a.milestones.includes("0")) {
                         logbase **= 0.02
+                    }
+                    if (player.points.gte("1ee12")) {
+                        logbase = 10
                     }
                     gain = gain.log(logbase).mul(cap)
                 }
@@ -421,18 +435,54 @@ addLayer("q", {
                 Cost: e185,534,014 points
                 Currently: ^${tmp.q.upgrades[51].effect.toPrecision(3)}`
             },
-            effect() {return player.points.add(10).slog().div(2)},
+            effect() {return player.points.add(10).slog().div(2).min(2)},
             unlocked() {return player.q.upgrades.includes(44)},
             canAfford() {return player.points.gte("e185534014")},
             pay() {
                 player.points = player.points.sub("e185534014")
             }
         },
+        52: {
+            fullDisplay() {
+                return `<h3>Wait a sec...</h3><br>
+                Neutrality's first effect can go above one.<br>
+                Req: 3,430 points per second in a Type-3 simulation`
+            },
+            unlocked() {return player.q.upgrades.includes(55)},
+            canAfford() {return getPointGen().gte(3430) && player.l.activeChallenge === 13},
+            pay() {
+                return
+            }
+        },
+        53: {
+            fullDisplay() {
+                return `<h3>Unoriginal joke about unoriginality</h3><br>
+                Neutrality's second effect can go below one.<br>
+                Req: 2,010 quarks`
+            },
+            unlocked() {return player.q.upgrades.includes(52)},
+            canAfford() {return player.q.points.gte(2010)},
+            pay() {
+                return
+            }
+        },
+        54: {
+            fullDisplay() {
+                return `<h3>The last unoriginal upgrade?</h3><br>
+                Neutrality's third effect can go above one.<br>
+                Req: 24,900 points per second in a Type-3 simulation`
+            },
+            unlocked() {return player.q.upgrades.includes(53)},
+            canAfford() {return getPointGen().gte(24900) && player.l.activeChallenge === 13},
+            pay() {
+                return
+            }
+        },
         55: {
             fullDisplay() {
                 return `<h3>Nooo, you can't just break the pattern of the unlocking upgrade being the fifth</h3><br>
-                Unlocks [something cool]<br>
-                Cost: e9104627203 points`
+                Unlocks neutral alignments<br>
+                Cost: e9,104,627,203 points`
             },
             unlocked() {return player.l.challenges[13] === 1},
             canAfford() {return player.points.gte("e9104627203")},
@@ -458,6 +508,7 @@ addLayer("l", {
         unlocked: false,
 		points: new Decimal(0),
         best: new Decimal(0),
+        resetTime: 0,
         law: new Decimal(0),
         chaos: new Decimal(0),
         good: new Decimal(0),
@@ -499,8 +550,26 @@ addLayer("l", {
         let al1 = new Decimal(2).mul(player.l.law.gte(1) ? player.l.law : new Decimal(0.5)).pow(strength)
         let al2 = new Decimal(10).pow(player.l.chaos).pow(strength)
         let al3 = new Decimal(0.5).pow(player.l.good.sqrt()).pow(strength.sqrt())
+        if (player.a.upgrades.includes(13)) {
+            al3 = al3.div(tmp.a.upgrades[13].effect)
+        }
         let al4 = new Decimal(1.25).mul(player.l.evil.gte(1) ? player.l.evil : new Decimal(0.8)).pow(strength)
-        return [strength, al1, al2, al3, al4]
+        let al51 = new Decimal(1)
+        if (player.q.upgrades.includes(52)) {
+            al51 = new Decimal(1.25).pow(player.l.neutral).pow(strength)
+            if (player.a.upgrades.includes(12)) {
+                al51 = al51.sqr()
+            }
+        }
+        let al52 = new Decimal(1)
+        if (player.q.upgrades.includes(53)) {
+            al52 = new Decimal(0.9).pow(player.l.neutral).pow(strength)
+        }
+        let al53 = new Decimal(1)
+        if (player.q.upgrades.includes(54)) {
+            al53 = new Decimal(2).pow(player.l.neutral).pow(strength)
+        }
+        return [strength, al1, al2, al3, al4, al51, al52, al53]
     },
     effectDescription: function() {return `which are boosting alignment boosts by ^${tmp.l.effect[0].toPrecision(3)}`},
     layerShown() {return player.q.upgrades.includes(25) || player.l.unlocked},
@@ -513,6 +582,13 @@ addLayer("l", {
     requires: new Decimal(1e18),
     exponent: function() {return player.l.best.div(100).add(1).sqr()},
     base: function() {return player.l.best.div(10).add(10)},
+    gainMult() {
+        let mult = new Decimal(1)
+        if (player.l.points.eq(118)) {
+            mult = mult.div("e6990299")
+        }
+        return mult
+    },
     doReset(layer) {
         if (tmp[layer].row == 0) {return}
         if (!(player.a.milestones.includes("3"))) {
@@ -552,6 +628,20 @@ addLayer("l", {
                 player.l.clickables[11] = "Active"
             }
         },
+        12: {
+            title: "Lawful Neutral",
+            display() {return `Currently: ${player.l.clickables[12] ? player.l.clickables[12] : "Inactive"}`},
+            unlocked() {return player.q.upgrades.includes(55)},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[12] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.law = player.l.law.add(1)
+                player.l.neutral = player.l.neutral.add(1)
+                player.l.clickables[12] = "Active"
+            }
+        },
         13: {
             title: "Lawful Evil",
             display() {return `Currently: ${player.l.clickables[13] ? player.l.clickables[13] : "Inactive"}`},
@@ -566,6 +656,47 @@ addLayer("l", {
                 player.l.clickables[13] = "Active"
             }
         },
+        21: {
+            title: "Neutral Good",
+            display() {return `Currently: ${player.l.clickables[21] ? player.l.clickables[21] : "Inactive"}`},
+            unlocked() {return player.q.upgrades.includes(55)},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[21] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.neutral = player.l.neutral.add(1)
+                player.l.good = player.l.good.add(1)
+                player.l.clickables[21] = "Active"
+            }
+        },
+        22: {
+            title: "True Neutral",
+            display() {return `Currently: ${player.l.clickables[22] ? player.l.clickables[22] : "Inactive"}`},
+            unlocked() {return player.q.upgrades.includes(55)},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[22] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.neutral = player.l.neutral.add(2)
+                player.l.clickables[22] = "Active"
+            }
+        },
+        23: {
+            title: "Neutral Evil",
+            display() {return `Currently: ${player.l.clickables[23] ? player.l.clickables[23] : "Inactive"}`},
+            unlocked() {return player.q.upgrades.includes(55)},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[23] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.neutral = player.l.neutral.add(1)
+                player.l.evil = player.l.evil.add(1)
+                player.l.clickables[23] = "Active"
+            }
+        },
         31: {
             title: "Chaotic Good",
             display() {return `Currently: ${player.l.clickables[31] ? player.l.clickables[31] : "Inactive"}`},
@@ -578,6 +709,20 @@ addLayer("l", {
                 player.l.chaos = player.l.chaos.add(1)
                 player.l.good = player.l.good.add(1)
                 player.l.clickables[31] = "Active"
+            }
+        },
+        32: {
+            title: "Chaotic Neutral",
+            display() {return `Currently: ${player.l.clickables[32] ? player.l.clickables[32] : "Inactive"}`},
+            unlocked() {return player.q.upgrades.includes(55)},
+            canClick() {
+                return player.l.alignments.lt(player.l.cap) && player.l.clickables[32] !== "Active"
+            },
+            onClick() {
+                player.l.alignments = player.l.alignments.add(1)
+                player.l.chaos = player.l.chaos.add(1)
+                player.l.neutral = player.l.neutral.add(1)
+                player.l.clickables[32] = "Active"
             }
         },
         33: {
@@ -600,9 +745,15 @@ addLayer("l", {
             player.l.chaos = new Decimal(0)
             player.l.good = new Decimal(0)
             player.l.evil = new Decimal(0)
+            player.l.neutral = new Decimal(0)
             player.l.clickables[11] = "Inactive"
+            player.l.clickables[12] = "Inactive"
             player.l.clickables[13] = "Inactive"
+            player.l.clickables[21] = "Inactive"
+            player.l.clickables[22] = "Inactive"
+            player.l.clickables[23] = "Inactive"
             player.l.clickables[31] = "Inactive"
+            player.l.clickables[32] = "Inactive"
             player.l.clickables[33] = "Inactive"
         },
         masterButtonText: "Respec alignments",
@@ -654,8 +805,22 @@ addLayer("l", {
                         return `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[1].toPrecision(3)}</h2>th power<br>
                         You have <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${player.l.chaos}</h2> chaos, which is multiplying down quark's effect by <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[2].toPrecision(3)}</h2><br>
                         You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${tmp.l.effect[3].toPrecision(3)}</h2><br>
-                        You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[4].toPrecision(3)}</h2>th power<br>
-                        You can have ${player.l.cap} alignments at a time<br>`
+                        You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[4].toPrecision(3)}</h2>th power<br>`
+                    },
+                    function() {return player.l.unlocked ? {} : {"display": "none"}}
+                ],
+                [
+                    "display-text",
+                    function() {
+                        return `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${tmp.l.effect[5].toPrecision(3)}</h2>th power, 
+                        multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${tmp.l.effect[6].toPrecision(3)}</h2> and raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${tmp.l.effect[7].toPrecision(3)}</h2>th power<br>`
+                    },
+                    function() {return player.q.upgrades.includes(55) ? {} : {"display": "none"}}
+                ],
+                [
+                    "display-text",
+                    function() {
+                        return `You can have ${player.l.cap} alignments at a time<br>`
                     },
                     function() {return player.l.unlocked ? {} : {"display": "none"}}
                 ],
@@ -678,6 +843,12 @@ addLayer("l", {
     },
     thisIsTheStupidestThingIveEverDoneInMyEntireLife() {
         tmp.l.tabFormat.Muons.unlocked = player.q.upgrades.includes(45)
+        try {
+            document.getElementById("neutral").style = player.q.upgrades.includes(55) ? {} : {"display": "none"}
+        }
+        catch {
+            return
+        }
     }
 })
 addLayer("a", {
@@ -735,6 +906,81 @@ addLayer("a", {
             requirementDescription: "20 atoms",
             effectDescription: "Keep leptons on reset and point gain ^1.05 per lepton.",
             done() {return player.a.best.gte(20)}
+        }
+    },
+    upgrades: {
+        11: {
+            fullDisplay() {
+                return `<h3>Hightrogen</h3><br>
+                Point gain ^1.01, increasing over time until ^2.00, reseting on lepton reset.<br>
+                Req: 269,000,000 points per second in a Type-1 simulation<br>
+                Currently: ^${tmp.a.upgrades[11].effect.toPrecision(3)}`
+            },
+            effect() {
+                let eff = player.l.resetTime/100+1.01
+                if (player.a.upgrades.includes(12)) {
+                    eff += 0.24
+                }
+                if (player.a.upgrades.includes(13)) {
+                    eff += 0.5
+                }
+                return new Decimal(eff).min(2)
+            },
+            unlocked() {return player.q.upgrades.includes(52)},
+            canAfford() {return getPointGen().gte(269000000) && player.l.activeChallenge === 11},
+            pay() {
+                return
+            }
+        },
+        12: {
+            fullDisplay() {
+                return `<h3>Lowtrogen</h3><br>
+                Hightrogen effect starts at 1.25, and neutrality's first effect is squared.<br>
+                Req: 575,000,000 points per second in a Type-1 simulation<br>`
+            },
+            unlocked() {return player.a.upgrades.includes(11)},
+            canAfford() {return getPointGen().gte(575000000) && player.l.activeChallenge === 11},
+            pay() {
+                return
+            }
+        },
+        13: {
+            fullDisplay() {
+                return `<h3>Nightrogen</h3><br>
+                Hightrogen effect starts at 1.75, and chaos's effect boosts good's effect.<br>
+                Req: 2e9 points per second in a Type-1 simulation<br>
+                Currently: /${tmp.a.upgrades[13].effect.toPrecision(3)}`
+            },
+            effect() {return tmp.l.effect[2].pow(0.05)},
+            unlocked() {return player.a.upgrades.includes(12)},
+            canAfford() {return getPointGen().gte(2e9) && player.l.activeChallenge === 11},
+            pay() {
+                return
+            }
+        },
+        14: {
+            fullDisplay() {
+                return `<h3>Daytrogen</h3><br>
+                Point gain ^2<br>
+                Req: 4.40e8.741e12 points per second<br>`
+            },
+            unlocked() {return player.a.upgrades.includes(13)},
+            canAfford() {return getPointGen().gte("4.3e8740772133944")},
+            pay() {
+                return
+            }
+        },
+        15: {
+            fullDisplay() {
+                return `<h3>Unoriginaltrogen</h3><br>
+                Unlocks [something "unoriginal"]<br>
+                Req: 3,207 quarks<br>`
+            },
+            unlocked() {return player.a.upgrades.includes(14)},
+            canAfford() {return player.q.points.gte(3207)},
+            pay() {
+                return
+            }
         }
     }
 })

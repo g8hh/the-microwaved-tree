@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "does anyone actually look at these? if you see this then good for you",
+	num: "0.4",
+	name: "01100101 01100001 01110011 01110100 01100101 01110010 00100000 01100101 01100111 01100111",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -34,7 +34,11 @@ let changelog = `<h1>Changelog:</h1><br>
 		- tricked and fooled you ill never add interesting things<br>
 		- mu(wu)ons exist now<br>
 		- added stuff until 22th quark upgrade<br>
-		- next up: the thing i planned in v0.1<br>`
+		- next up: the thing i planned in v0.1<br>
+	<h3>v0.4</h3><br>
+		- neutral alignments don't don't exist lol<br>
+		- added stuff until 5th atom upgrade<br>
+		- next up: does the word unoriginal even mean anything anymore tbh<br>`
 
 let winText = `youre done pog`
 
@@ -105,6 +109,15 @@ function getPointGen() {
 	}
 	if (player.q.upgrades.includes(51)) {
 		gain = gain.pow(tmp.q.upgrades[51].effect)
+	}
+	if (player.q.upgrades.includes(52)) {
+		gain = gain.pow(tmp.l.effect[5])
+	}
+	if (player.a.upgrades.includes(11)) {
+		gain = gain.pow(tmp.a.upgrades[11].effect)
+	}
+	if (player.a.upgrades.includes(14)) {
+		gain = gain.pow(2)
 	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
