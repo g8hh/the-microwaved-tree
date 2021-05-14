@@ -1164,7 +1164,7 @@ addLayer("u", {
             fullDisplay() {
                 return `<h3>[add witty upgrade name here]</h3><br>
                 Strange quark's negative effect is square rooted.<br>
-                Req: 304,000 points per second in a Type-3 simulation<br>`
+                Req: 305,000 points per second in a Type-3 simulation<br>`
             },
             unlocked() {return player.u.upgrades.includes(13)},
             canAfford() {return getPointGen().gte(305000) && player.l.activeChallenge === 13},
