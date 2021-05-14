@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5",
-	name: "when will the jokes end",
+	num: "0.5.1",
+	name: "minor update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -43,7 +43,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- unoriginality exists now<br>
 		- added stuff until 5th unoriginality upgrade<br>
 		- im not really satisfied with this update tbh<br>
-		- next up: charm quarks. yep. just charm quarks. nothing else at all.<br>`
+		- next up: charm quarks. yep. just charm quarks. nothing else at all.<br>
+	<h3>v0.5.1</h3><br>
+		- charm quarks exist now<br>
+		- added stuff until 30th quark upgrade<br>
+		- i wasn't lying about it only being charm quarks<br>
+		- next up: two good things that have nothing in common<br>`
 
 let winText = `youre done pog`
 
@@ -104,7 +109,7 @@ function getPointGen() {
 		gain = gain.pow(3)
 	}
 	if (player.q.upgrades.includes(43)) {
-		gain = gain.pow(4)
+		gain = gain.pow(tmp.q.upgrades[43].effect)
 	}
 	if (player.q.upgrades.includes(44)) {
 		gain = gain.pow(1.017100171)
@@ -125,7 +130,7 @@ function getPointGen() {
 		gain = gain.pow(2)
 	}
 	if (player.a.upgrades.includes(15)) {
-		gain = gain.pow(new Decimal(2).mul(tmp.u.effect[1]))
+		gain = gain.pow(tmp.a.upgrades[15].effect)
 	}
 	if (player.u.unlocked) {
 		gain = gain.pow(tmp.u.effect[0])
@@ -139,6 +144,9 @@ function getPointGen() {
 	if (player.u.upgrades.includes(13)) {
 		gain = gain.pow(new Decimal(0.99).pow(-0.99))
 	}
+	if (player.l.challenges[21] === 1) {
+		gain = gain.pow(tmp.l.effect[0])
+	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
 	}
@@ -150,6 +158,9 @@ function getPointGen() {
 	}
 	if (player.l.activeChallenge === 13) {
 		gain = gain.tetrate(0.5)
+	}
+	if (player.l.activeChallenge === 21) {
+		gain = gain.tetrate(0.25)
 	} 
 	return gain
 }
