@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5.1",
-	name: "minor update",
+	num: "0.5.2",
+	name: "stayin alive",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -48,7 +48,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- charm quarks exist now<br>
 		- added stuff until 30th quark upgrade<br>
 		- i wasn't lying about it only being charm quarks<br>
-		- next up: two good things that have nothing in common<br>`
+		- next up: two good things that have nothing in common<br>
+	<h3>v0.5.2</h3><br>
+		- tau exist now<br>
+		- added stuff until 5th lepton upgrade<br>
+		- imagine thinking the 2 in 1 bundle would actually give 2 mechanics lol<br>
+		- next up: electrifying<br>`
 
 let winText = `youre done pog`
 
@@ -183,7 +188,7 @@ function isEndgame() {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600) // Default is 1 hour which is just arbitrarily large
+	return(1) // Default is 1 hour which is just arbitrarily large
 }
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
