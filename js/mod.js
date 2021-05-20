@@ -155,6 +155,9 @@ function getPointGen() {
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
 	}
+	if (player.l.upgrades.includes(15)) {
+		gain = gain.mul(new Decimal(10).pow(player.l.taueff))
+	}
 	if (player.l.activeChallenge === 12) {
 		gain = gain.tetrate(0.1)
 	}

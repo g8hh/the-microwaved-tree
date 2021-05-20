@@ -649,6 +649,8 @@ addLayer("l", {
         best: new Decimal(0),
         tau: new Decimal(0),
         tauprod: new Decimal(0),
+        taueff: new Decimal(1),
+        taugain: new Decimal(0),
         progbar1: new Decimal(0),
         progbar2: 0,
         min: new Decimal(0.45),
@@ -778,7 +780,7 @@ addLayer("l", {
         player.l.comps = new Decimal(comps)
     },
     update(diff) {
-        // tau production
+        // tau stuff
         let gain = player.l.tau.add(10).log10()
         if (player.l.upgrades.includes(13)) {
             gain = gain.mul((Math.sin(player.l.progbar2)+1)*5)
@@ -794,6 +796,18 @@ addLayer("l", {
         }
         if (player.l.upgrades.includes(14)) {
             gain = gain.pow(1.5)
+        }
+        if (player.l.upgrades.includes(21)) {
+            gain = gain.pow(tmp.l.upgrades[21].effect)
+        }
+        if (player.l.upgrades.includes(22)) {
+            gain = gain.pow(tmp.l.upgrades[22].effect)
+        }
+        if (player.l.upgrades.includes(23)) {
+            gain = gain.pow((Math.sin(player.l.progbar2)+1)*5)
+        }
+        if (player.l.upgrades.includes(24)) {
+            gain = gain.pow(2)
         }
         if (player.l.upgrades.includes(11) && player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max)) {
             gain = gain.sqr()
@@ -814,6 +828,11 @@ addLayer("l", {
         }
         if (player.l.upgrades.includes(13)) {
             player.l.progbar2 += diff*0.5
+        }
+        if (player.l.upgrades.includes(15)) {
+            let gain = new Decimal(1e24).mul(player.l.tau.add(10).log10())
+            player.l.taueff = player.l.taueff.add(gain.mul(diff))
+            player.l.taugain = gain
         }
     },
     clickables: {
@@ -932,20 +951,6 @@ addLayer("l", {
             title: "Chaotic Evil",
             display() {return `Currently: ${player.l.clickables[33] ? player.l.clickables[33] : "Inactive"}`},
             unlocked() {return player.l.unlocked},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[33] !== "Active"
-            },
-            onClick() {
-                player.l.alignments = player.l.alignments.add(1)
-                player.l.chaos = player.l.chaos.add(1)
-                player.l.evil = player.l.evil.add(1)
-                player.l.clickables[33] = "Active"
-            }
-        },
-        41: {
-            title: "Chaotic Evil",
-            display() {return `Currently: ${player.l.clickables[33] ? player.l.clickables[33] : "Inactive"}`},
-            unlocked() {return player.l.upgrades.includes(11)},
             canClick() {
                 return player.l.alignments.lt(player.l.cap) && player.l.clickables[33] !== "Active"
             },
@@ -1154,13 +1159,77 @@ addLayer("l", {
         15: {
             fullDisplay() {
                 return `<h3>We do a little grinding</h3><br>
-                Gives tau an effect. (but not yet lol wait till next update)<br>
+                Gives tau an effect.<br>
                 Cost: 1e75 tau particles`
             },
             unlocked() {return player.l.upgrades.includes(14)},
             canAfford() {return player.l.tau.gte(1e75)},
             pay() {
                 player.l.tau = player.l.tau.sub(1e75)
+            }
+        },
+        21: {
+            fullDisplay() {
+                return `<h3>Synergism</h3><br>
+                Points boost tau gain.<br>
+                Req: ee28 points<br>
+                Currently: ^${format(tmp.l.upgrades[21].effect, 2)}`
+            },
+            effect() {return player.points.add(10).slog().min(4)},
+            unlocked() {return player.l.upgrades.includes(15)},
+            canAfford() {return player.points.gte("ee28")},
+            pay() {
+                return
+            }
+        },
+        22: {
+            fullDisplay() {
+                return `<h3>Narcissism</h3><br>
+                Tau boost tau gain.<br>
+                Req: 2.5e348 tau particles<br>
+                Currently: ^${format(tmp.l.upgrades[22].effect, 2)}`
+            },
+            effect() {return player.l.tau.add(10).log10().add(9).log(10)},
+            unlocked() {return player.l.upgrades.includes(21)},
+            canAfford() {return player.l.tau.gte("2.5e348")},
+            pay() {
+                return
+            }
+        },
+        23: {
+            fullDisplay() {
+                return `<h3>E</h3><br>
+                Second bar's effect is exponential.<br>
+                Req: 1e1411 tau particles`
+            },
+            unlocked() {return player.l.upgrades.includes(22)},
+            canAfford() {return player.l.tau.gte("1e1411")},
+            pay() {
+                return
+            }
+        },
+        24: {
+            fullDisplay() {
+                return `<h3>aeiou</h3><br>
+                Tau gain ^2.<br>
+                Req: ee31 points`
+            },
+            unlocked() {return player.l.upgrades.includes(23)},
+            canAfford() {return player.points.gte("ee31")},
+            pay() {
+                return
+            }
+        },
+        25: {
+            fullDisplay() {
+                return `<h3>(Electrons included)</h3><br>
+                Unlock [not yet].<br>
+                Req: e156,600 tau particles`
+            },
+            unlocked() {return player.l.upgrades.includes(24)},
+            canAfford() {return player.l.tau.gte("e156600")},
+            pay() {
+                return
             }
         }
     },
@@ -1242,6 +1311,15 @@ addLayer("l", {
                     function() {
                         return `You have ${format(player.l.tau, 3)} tau particles<br>
                         You are gaining ${format(player.l.tauprod, 3)} tau particles per second`
+                    }
+                ],
+                [
+                    "display-text",
+                    function() {
+                        if (player.l.upgrades.includes(15)) {
+                            return `Your tau particles are multiplying point gain after all powers by e${format(player.l.taueff, 2)}<br>
+                            Your tau multiplier exponent is increasing by ${format(player.l.taugain, 2)} per second`
+                        }
                     }
                 ],
                 "buyables",
