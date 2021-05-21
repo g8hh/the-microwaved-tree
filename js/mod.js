@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5.2",
-	name: "stayin alive",
+	num: "0.6",
+	name: "electric guitar",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -53,7 +53,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- tau exist now<br>
 		- added stuff until 5th lepton upgrade<br>
 		- imagine thinking the 2 in 1 bundle would actually give 2 mechanics lol<br>
-		- next up: electrifying<br>`
+		- next up: electrifying<br>
+	<h3>v0.6</h3><br>
+		- electrons exist now<br>
+		- added stuff until 10th electron upgrade<br>
+		- there are no meta^8 dimensions<br>
+		- next up: more inflation<br>`
 
 let winText = `youre done pog`
 
@@ -108,10 +113,10 @@ function getPointGen() {
 		gain = gain.pow(new Decimal(1.05).pow(player.l.points))
 	}
 	if (player.q.upgrades.includes(41)) {
-		gain = gain.pow(2)
+		gain = gain.sqr()
 	}
 	if (player.q.upgrades.includes(42)) {
-		gain = gain.pow(3)
+		gain = gain.cube()
 	}
 	if (player.q.upgrades.includes(43)) {
 		gain = gain.pow(tmp.q.upgrades[43].effect)
@@ -132,7 +137,7 @@ function getPointGen() {
 		gain = gain.pow(tmp.a.upgrades[11].effect)
 	}
 	if (player.a.upgrades.includes(14)) {
-		gain = gain.pow(2)
+		gain = gain.sqr()
 	}
 	if (player.a.upgrades.includes(15)) {
 		gain = gain.pow(tmp.a.upgrades[15].effect)

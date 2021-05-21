@@ -37,7 +37,7 @@ addLayer("q", {
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal(1),
-    exponent: function() {
+    exponent() {
         let exp = player.q.best.div(100).add(1)
         if (player.l.unlocked) {
             exp = exp.mul(tmp.l.effect[3])
@@ -84,12 +84,12 @@ addLayer("q", {
             }
         }
     },
-    resetsNothing: function() {return player.a.milestones.includes("2")},
+    resetsNothing() {return player.a.milestones.includes("2")},
     buyables: {
         11: {
             title: "Up Quark",
-            cost(x) {return new Decimal(1)},
-            effect(x) {
+            cost() {return new Decimal(1)},
+            effect() {
                 let gain = new Decimal(player.q.buyables[11])
                 if (player.q.upgrades.includes(11)) {
                     gain = gain.mul(3)
@@ -126,8 +126,8 @@ addLayer("q", {
         },
         12: {
             title: "Down Quark",
-            cost(x) {return new Decimal(1)},
-            effect(x) {
+            cost() {return new Decimal(1)},
+            effect() {
                 let cap = new Decimal(100).mul(player.q.buyables[12])
                 let gain = player.points.div(1000).mul(player.q.buyables[12]).sub(player.q.buyables[12])
                 if (player.q.upgrades.includes(22) && gain.gte(cap) && cap.gte(1)) {
@@ -187,8 +187,8 @@ addLayer("q", {
         },
         13: {
             title: "Strange Quark",
-            cost(x) {return new Decimal(2)},
-            effect(x) {
+            cost() {return new Decimal(2)},
+            effect() {
                 let pow = new Decimal(0.9).pow(player.q.buyables[13].sqrt())
                 let mult = player.points.gte(10000) ? player.points.div(1000).log10().sqr().pow(player.q.buyables[13].gte(1) ? player.q.buyables[13].log10().add(1) : new Decimal(1)) : new Decimal(1)
                 if (player.q.upgrades.includes(21)) {
@@ -230,8 +230,8 @@ addLayer("q", {
         },
         21: {
             title: "Charm Quark",
-            cost(x) {return new Decimal(1000)},
-            effect(x) {
+            cost() {return new Decimal(1000)},
+            effect() {
                 let exp = new Decimal(0.25).mul(player.q.buyables[21]).add(1).sqrt()
                 return exp
             },
@@ -529,9 +529,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(55)},
             canAfford() {return getPointGen().gte(3430) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         53: {
             fullDisplay() {
@@ -541,9 +539,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(52)},
             canAfford() {return player.q.points.gte(2010)},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         54: {
             fullDisplay() {
@@ -553,9 +549,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(53)},
             canAfford() {return getPointGen().gte(24900) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         55: {
             fullDisplay() {
@@ -572,14 +566,12 @@ addLayer("q", {
         61: {
             fullDisplay() {
                 return `<h3>That's it?</h3><br>
-                Unlock a new type of particle simulation, and unoriginality exponent +0.5.<br>
+                Unlock a new type of particle simulation and unoriginality exponent +0.5.<br>
                 Req: 4,297 quarks`
             },
             unlocked() {return player.u.upgrades.includes(15)},
             canAfford() {return player.q.points.gte(4297)},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         62: {
             fullDisplay() {
@@ -589,9 +581,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(61)},
             canAfford() {return getPointGen().gte(1375000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         63: {
             fullDisplay() {
@@ -601,9 +591,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(62)},
             canAfford() {return getPointGen().gte(1530000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         64: {
             fullDisplay() {
@@ -613,9 +601,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(63)},
             canAfford() {return getPointGen().gte(1560000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         65: {
             fullDisplay() {
@@ -625,9 +611,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(64)},
             canAfford() {return getPointGen().gte(10000) && player.l.activeChallenge === 21},
-            pay() {
-                return
-            }
+            pay() {return}
         }
     },
     tabFormat: [
@@ -723,7 +707,7 @@ addLayer("l", {
         }
         return [strength, al1, al2, al3, al4, al51, al52, al53]
     },
-    effectDescription: function() {return `which are boosting alignment boosts by ^${format(tmp.l.effect[0], 2)}`},
+    effectDescription() {return `which are boosting alignment boosts by ^${format(tmp.l.effect[0], 2)}`},
     layerShown() {return player.q.upgrades.includes(25) || player.l.unlocked},
     symbol: "L",
     position: 1,
@@ -732,8 +716,8 @@ addLayer("l", {
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal(1e18),
-    exponent: function() {return player.l.best.div(100).add(1).sqr()},
-    base: function() {return player.l.best.div(10).add(10)},
+    exponent() {return player.l.best.div(100).add(1).sqr()},
+    base() {return player.l.best.div(10).add(10)},
     autoPrestige() {return player.u.milestones.includes("5")},
     gainMult() {
         let mult = new Decimal(1)
@@ -807,7 +791,13 @@ addLayer("l", {
             gain = gain.pow((Math.sin(player.l.progbar2)+1)*5)
         }
         if (player.l.upgrades.includes(24)) {
-            gain = gain.pow(2)
+            gain = gain.sqr()
+        }
+        if (tmp.e.effect.gte(1)) {
+            gain = gain.pow(tmp.e.effect)
+        }
+        if (player.e.upgrades.includes(14)) {
+            gain = gain.pow(tmp.e.upgrades[14].effect)
         }
         if (player.l.upgrades.includes(11) && player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max)) {
             gain = gain.sqr()
@@ -827,7 +817,11 @@ addLayer("l", {
             }
         }
         if (player.l.upgrades.includes(13)) {
-            player.l.progbar2 += diff*0.5
+            let mult = 0.5
+            if (player.e.upgrades.includes(12)) {
+                mult *= 2
+            }
+            player.l.progbar2 += diff * mult
         }
         if (player.l.upgrades.includes(15)) {
             let gain = new Decimal(1e24).mul(player.l.tau.add(10).log10())
@@ -1030,8 +1024,8 @@ addLayer("l", {
     buyables: {
         11: {
             title: "Generic buyable that boosts gain",
-            cost(x) {return new Decimal(1.25).pow(new Decimal(1.25).pow(player.l.buyables[11]))},
-            effect(x) {
+            cost() {return new Decimal(1.25).pow(new Decimal(1.25).pow(player.l.buyables[11]))},
+            effect() {
                 let mult = new Decimal(1.5).pow(player.l.buyables[11])
                 return mult
             },
@@ -1049,8 +1043,8 @@ addLayer("l", {
         },
         12: {
             title: "This one raises things to a power",
-            cost(x) {return new Decimal(10).pow(new Decimal(10).pow(player.l.buyables[12].pow(2)))},
-            effect(x) {
+            cost() {return new Decimal(10).pow(new Decimal(10).pow(player.l.buyables[12].sqr()))},
+            effect() {
                 let mult = new Decimal(2).pow(player.l.buyables[12])
                 return mult
             },
@@ -1068,8 +1062,8 @@ addLayer("l", {
         },
         13: {
             title: "This one raises all gain to a power",
-            cost(x) {return new Decimal(1e20).pow(new Decimal(1.1).pow(player.l.buyables[13].pow(2)))},
-            effect(x) {
+            cost() {return new Decimal(1e20).pow(new Decimal(1.1).pow(player.l.buyables[13].sqr()))},
+            effect() {
                 let mult = new Decimal(1.1).pow(player.l.buyables[13])
                 return mult
             },
@@ -1087,8 +1081,8 @@ addLayer("l", {
             }
         },
         101: {
-            title: "Generic Button #1",
-            cost(x) {return new Decimal(0)},
+            title: "Generic Button #0",
+            cost() {return new Decimal(0)},
             display() {
                 return `This button does stuff to the bars below. Read those for actual information. (Hold down the button for at least 0.25s for stuff to happen)`
             },
@@ -1178,9 +1172,7 @@ addLayer("l", {
             effect() {return player.points.add(10).slog().min(4)},
             unlocked() {return player.l.upgrades.includes(15)},
             canAfford() {return player.points.gte("ee28")},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         22: {
             fullDisplay() {
@@ -1192,9 +1184,7 @@ addLayer("l", {
             effect() {return player.l.tau.add(10).log10().add(9).log(10)},
             unlocked() {return player.l.upgrades.includes(21)},
             canAfford() {return player.l.tau.gte("2.5e348")},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         23: {
             fullDisplay() {
@@ -1204,9 +1194,7 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(22)},
             canAfford() {return player.l.tau.gte("1e1411")},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         24: {
             fullDisplay() {
@@ -1216,21 +1204,17 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(23)},
             canAfford() {return player.points.gte("ee31")},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         25: {
             fullDisplay() {
                 return `<h3>(Electrons included)</h3><br>
-                Unlock [not yet].<br>
+                Unlock electrons.<br>
                 Req: e156,600 tau particles`
             },
             unlocked() {return player.l.upgrades.includes(24)},
             canAfford() {return player.l.tau.gte("e156600")},
-            pay() {
-                return
-            }
+            pay() {return}
         }
     },
     bars: {
@@ -1265,27 +1249,16 @@ addLayer("l", {
                 [
                     "display-text",
                     function() {
-                        return `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[1], 2)}</h2>th power<br>
+                        let str = `You have <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${player.l.law}</h2> law, which is raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[1], 2)}</h2>th power<br>
                         You have <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${player.l.chaos}</h2> chaos, which is multiplying down quark's effect by <h2 style='color: #000000; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[2], 2)}</h2><br>
                         You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[3], 2)}</h2><br>
                         You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[4], 2)}</h2>th power<br>`
-                    },
-                    function() {return player.l.unlocked ? {} : {"display": "none"}}
-                ],
-                [
-                    "display-text",
-                    function() {
-                        return `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[5], 2)}</h2>th power, 
-                        multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[6], 2)}</h2> and raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[7], 2)}</h2>th power<br>`
-                    },
-                    function() {return player.q.upgrades.includes(55) ? {} : {"display": "none"}}
-                ],
-                [
-                    "display-text",
-                    function() {
-                        if (player.l.unlocked) {
-                            return `You can have ${player.l.cap} alignments at a time<br>`
+                        if (player.q.upgrades.includes(55)) {
+                            str += `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[5], 2)}</h2>th power, 
+                            multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[6], 2)}</h2> and raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[7], 2)}</h2>th power<br>`
+                        str += `You can have ${player.l.cap} alignments at a time`
                         }
+                        if (player.l.unlocked) {return str}
                     }
                 ],
                 "clickables"
@@ -1332,10 +1305,7 @@ addLayer("l", {
                         }
                     }
                 ],
-                [
-                    "bar",
-                    "one"
-                ],
+                ["bar", "one"],
                 [
                     "display-text",
                     function() {
@@ -1344,10 +1314,7 @@ addLayer("l", {
                         }
                     }
                 ],
-                [
-                    "bar",
-                    "two"
-                ],
+                ["bar", "two"],
                 "upgrades"
             ],
             unlocked: false
@@ -1382,7 +1349,7 @@ addLayer("a", {
         }
         return eff
     },
-    effectDescription: function() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)}`},
+    effectDescription() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)}`},
     layerShown() {return player.q.upgrades.includes(35) || player.a.unlocked},
     symbol: "A",
     position: 0,
@@ -1391,8 +1358,8 @@ addLayer("a", {
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal(1e100),
-    exponent: function() {return player.a.best.div(100).add(1).cube()},
-    base: function() {return player.a.best.add(100)},
+    exponent() {return player.a.best.div(100).add(1).cube()},
+    base() {return player.a.best.add(100)},
     milestones: {
         0: {
             requirementDescription: "2 atoms",
@@ -1435,35 +1402,29 @@ addLayer("a", {
             },
             unlocked() {return player.q.upgrades.includes(52)},
             canAfford() {return getPointGen().gte(269000000) && player.l.activeChallenge === 11},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         12: {
             fullDisplay() {
                 return `<h3>Lowtrogen</h3><br>
-                Hightrogen's effect starts at 1.25, and neutrality's first effect is squared.<br>
+                Hightrogen's effect starts at 1.25 and neutrality's first effect is squared.<br>
                 Req: 575,000,000 points per second in a Type-1 simulation<br>`
             },
             unlocked() {return player.a.upgrades.includes(11)},
             canAfford() {return getPointGen().gte(575000000) && player.l.activeChallenge === 11},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         13: {
             fullDisplay() {
                 return `<h3>Nightrogen</h3><br>
-                Hightrogen's effect starts at 1.75, and chaos's effect boosts good's effect.<br>
+                Hightrogen's effect starts at 1.75 and chaos's effect boosts good's effect.<br>
                 Req: 2e9 points per second in a Type-1 simulation<br>
                 Currently: /${format(tmp.a.upgrades[13].effect, 2)}`
             },
             effect() {return tmp.l.effect[2].pow(0.05)},
             unlocked() {return player.a.upgrades.includes(12)},
             canAfford() {return getPointGen().gte(2e9) && player.l.activeChallenge === 11},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         14: {
             fullDisplay() {
@@ -1473,9 +1434,7 @@ addLayer("a", {
             },
             unlocked() {return player.a.upgrades.includes(13)},
             canAfford() {return getPointGen().gte("4.3e8740772133944")},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         15: {
             fullDisplay() {
@@ -1489,9 +1448,7 @@ addLayer("a", {
             },
             unlocked() {return player.a.upgrades.includes(14)},
             canAfford() {return player.q.points.gte(3207)},
-            pay() {
-                return
-            }
+            pay() {return}
         }
     }
 })
@@ -1505,7 +1462,7 @@ addLayer("u", {
     }},
     color: "#696969",
     row: 1,
-    resource: function() {return `unoriginality^${player.u.unlocked ? format(player.u.exp, 2) : 0}`},
+    resource() {return `unoriginality^${player.u.unlocked ? format(player.u.exp, 2) : 0}`},
     hotkeys: [
         {
             key: "u",
@@ -1525,7 +1482,7 @@ addLayer("u", {
         }
         return [eff0, eff1, eff2]
     },
-    effectDescription: function() {return `which is raising point gain to the ${format(tmp.u.effect[0], 4)}th power`},
+    effectDescription() {return `which is raising point gain to the ${format(tmp.u.effect[0], 4)}th power`},
     layerShown() {return player.a.upgrades.includes(15) || player.u.unlocked},
     symbol: "U",
     position: 1,
@@ -1534,9 +1491,9 @@ addLayer("u", {
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal("ee20"),
-    exponent: function() {return player.u.best.add(1)},
-    base: function() {return new Decimal(10).pow(player.u.best.add(1))},
-    resetsNothing: function() {return player.u.milestones.includes("7")},
+    exponent() {return player.u.best.add(1)},
+    base() {return new Decimal(10).pow(player.u.best.add(1))},
+    resetsNothing() {return player.u.milestones.includes("7")},
     unExp() {
         let exp = new Decimal(0)
         if (player.u.milestones.includes("1")) {
@@ -1573,13 +1530,13 @@ addLayer("u", {
         },
         2: {
             requirementDescription: "3 unoriginality",
-            effectDescription: "Keep the fourth row of quark upgrades, and leptons no longer reset anything.",
+            effectDescription: "Keep the fourth row of quark upgrades and leptons no longer reset anything.",
             done() {return player.u.best.gte(3)},
             unlocked() {return player.u.milestones.includes("1")}
         },
         3: {
             requirementDescription: "5 unoriginality",
-            effectDescription: "Keep the 21st and 25th quark upgrades, and alignments are not reset.",
+            effectDescription: "Keep the 21st and 25th quark upgrades and alignments are not reset.",
             done() {return player.u.best.gte(5)},
             unlocked() {return player.u.milestones.includes("2")}
         },
@@ -1591,7 +1548,7 @@ addLayer("u", {
         },
         5: {
             requirementDescription: "15 unoriginality",
-            effectDescription: "Leptons are automatically bought, and point gain ^1.15",
+            effectDescription: "Leptons are automatically bought and point gain ^1.15",
             done() {return player.u.best.gte(15)},
             unlocked() {return player.u.milestones.includes("4")}
         },
@@ -1612,14 +1569,12 @@ addLayer("u", {
         11: {
             fullDisplay() {
                 return `<h3>Stranger things</h3><br>
-                Strange quarks's negative effect ^^0.01, and point gain ^log10(log10(positive effect)).<br>
+                Strange quarks's negative effect ^^0.01 and point gain ^log10(log10(positive effect)).<br>
                 Req: 267,000 points per second in a Type-3 simulation<br>`
             },
             unlocked() {return player.u.milestones.includes("6")},
             canAfford() {return getPointGen().gte(267000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         12: {
             fullDisplay() {
@@ -1629,9 +1584,7 @@ addLayer("u", {
             },
             unlocked() {return player.u.upgrades.includes(11)},
             canAfford() {return getPointGen().gte(300000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         13: {
             fullDisplay() {
@@ -1641,9 +1594,7 @@ addLayer("u", {
             },
             unlocked() {return player.u.upgrades.includes(12)},
             canAfford() {return player.q.points.gte(3254)},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         14: {
             fullDisplay() {
@@ -1653,21 +1604,18 @@ addLayer("u", {
             },
             unlocked() {return player.u.upgrades.includes(13)},
             canAfford() {return getPointGen().gte(305000) && player.l.activeChallenge === 13},
-            pay() {
-                return
-            }
+            pay() {return}
         },
         15: {
             fullDisplay() {
                 return `<h3>9 Charm 4</h3><br>
-                Unlocks charm quarks, and you can choose one more alignment<br>
-                Req: e5.781e20 points per second<br>`
+                Unlocks charm quarks and you can choose one more alignment<br>
+                Req: e5.781e20 points per second<br>
+                Currently: ^${format(tmp.q.upgrades[51].effect, 2)}`
             },
             unlocked() {return player.u.upgrades.includes(14)},
             canAfford() {return getPointGen().gte("ee20.76203338319")},
-            pay() {
-                return
-            }
+            pay() {return}
         }
     },
     tabFormat: [
@@ -1676,19 +1624,416 @@ addLayer("u", {
         [
             "display-text",
             function() {
-                return `Unoriginality exponent effects:<br>
+                let str = `Unoriginality exponent effects:<br>
                 <h3>Unoriginaltrogen</h3>'s second effect x${format(tmp.u.effect[1], 4)}<br>`
-            },
-            function() {return player.u.exp.gte(1) ? {} : {"display": "none"}}
-        ],
-        [
-            "display-text",
-            function() {
-                return `<h3>This is even more unoriginal</h3>'s effect x${format(tmp.u.effect[2], 4)}<br>`
-            },
-            function() {return player.u.exp.gte(10) ? {} : {"display": "none"}}
+                if (player.u.exp.gte(10)) {
+                    str += `<h3>This is even more unoriginal</h3>'s effect x${format(tmp.u.effect[2], 4)}<br>`
+                }
+                if (player.u.exp.gte(1)) {return str}
+            }
         ],
         "milestones",
         "upgrades"
     ]
+})
+addLayer("e", {
+    name: "electrons",
+    startData() {return {
+        unlocked: true,
+		points: new Decimal(0),
+        best: new Decimal(0),
+        softcap_mult: new Decimal(10),
+        button1: {
+            bpm: new Decimal(10),
+            combo: new Decimal(0),
+            best: new Decimal(0),
+            min: new Decimal(0.4),
+            max: new Decimal(0.6),
+            bar: new Decimal(0),
+            eff: new Decimal(0)
+        },
+        button2: {
+            neutrino: new Decimal(1),
+            ng: new Decimal(69420),
+            time: new Decimal(0),
+            timeff: new Decimal(1),
+            eff: new Decimal(0)
+        }
+    }},
+    color: "#224488",
+    row: 3,
+    resource: "electrons",
+    effect() {
+        let eff = player.e.points.add(1).log10()
+        let softcap = player.e.softcap_mult
+        while (eff.gte(softcap)) {
+            eff = eff.log10().mul(softcap.div(softcap.log10()))
+            softcap = softcap.mul(player.e.softcap_mult)
+        }
+        return eff
+    },
+    layerShown() {return player.l.upgrades.includes(25)},
+    symbol: "E",
+    position: 1,
+    branches: ["a", "u"],
+    tooltip: "",
+    type: "normal",
+    baseResource: "",
+    baseAmount: new Decimal(1),
+    requires: new Decimal(0),
+    update(diff) {
+        // button 1
+        if (player.e.unlocked) {
+            player.e.button1.bar = player.e.button1.bar.add(player.e.button1.bpm.div(60).mul(diff))
+            if (player.e.button1.bar.gt(1)) {
+                player.e.button1.bar = new Decimal(0)
+            }
+            if (player.e.upgrades.includes(11)) {
+                player.e.button1.min = new Decimal(0.35)
+                player.e.button1.max = new Decimal(0.65)
+            }
+            let eff1 = player.e.button1.best.add(1).log10()
+            if (player.e.upgrades.includes(13)) {
+                eff1 = eff1.pow(10)
+            }
+            player.e.button1.eff = eff1
+            player.e.buyables[11] = player.e.buyables[11].add(eff1.mul(diff))
+        }
+        // button 2
+        if (player.e.upgrades.includes(15)) {
+            player.e.button2.ng = new Decimal(69420).sub(tmp.e.buyables[171].effect)
+            let timeff1 = player.e.button2.time.add(2).log2()
+            if (player.e.upgrades.includes(22)) {
+                timeff1 = timeff1.sqr()
+            }
+            if (player.e.upgrades.includes(24)) {
+                timeff1 = timeff1.sqr()
+            }
+            player.e.button2.timeff = timeff1
+            player.e.button2.neutrino = player.e.button2.neutrino.add(tmp.e.buyables[91].effect.mul(diff).mul(timeff1))
+            player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[171].effect.mul(diff))
+        }
+        // dimensions
+        if (player.e.buyables[11].gte(1)) {
+            player.e.points = player.e.points.add(tmp.e.buyables[11].effect.mul(diff))
+        }
+        if (player.e.buyables[21].gte(1)) {
+            player.e.buyables[11] = player.e.buyables[11].add(tmp.e.buyables[21].effect.mul(diff))
+        }
+    },
+    buyables: {
+        11: {
+            title: "Normal Dimensions",
+            effect() {
+                let gain = new Decimal(10).pow(player.e.buyables[11])
+                return gain
+            },
+            display() {
+                return `Produces electrons.
+                Currently: ${format(tmp.e.buyables[11].effect, 2)}/s
+                Amount: ${format(player.e.buyables[11], 2)}`
+            },
+            unlocked() {return player.e.unlocked},
+            canAfford() {return false},
+            buy() {return},
+            style: {"height": "100px", "width": "200px"}
+        },
+        21: {
+            title: "Meta Dimensions",
+            effect() {
+                let gain = new Decimal(10).pow(player.e.buyables[21])
+                return gain
+            },
+            display() {
+                return `Produces normal dimensions.
+                Currently: ${format(tmp.e.buyables[21].effect, 2)}/s
+                Amount: ${format(player.e.buyables[21], 2)}`
+            },
+            unlocked() {return player.e.upgrades.includes(15)},
+            canAfford() {return false},
+            buy() {return},
+            style: {"height": "100px", "width": "200px"}
+        },
+        91: {
+            title: "1st Neutrino Dimension",
+            cost() {return new Decimal(1).mul(new Decimal(10).pow(player.e.buyables[91]))},
+            effect() {
+                let gain = player.e.buyables[91]
+                let pow = new Decimal(1).div(player.e.button2.ng)
+                if (player.e.upgrades.includes(21)) {
+                    pow = pow.pow(0.1)
+                }
+                if (player.e.upgrades.includes(24)) {
+                    pow = pow.pow(0.5)
+                }
+                return gain.pow(pow)
+            },
+            display() {
+                return `Produces neutrinos.
+                Currently: ${format(tmp.e.buyables[91].effect, 2)}/s
+                Cost: ${format(tmp.e.buyables[91].cost, 2)}
+                Amount: ${format(player.e.buyables[91], 2)}`
+            },
+            unlocked() {return player.e.upgrades.includes(15)},
+            canAfford() {return player.e.button2.neutrino.gte(tmp.e.buyables[91].cost)},
+            buy() {
+                player.e.button2.neutrino = player.e.button2.neutrino.sub(tmp.e.buyables[91].cost)
+                player.e.buyables[91] = player.e.buyables[91].add(1)
+            },
+            style: {"height": "100px", "width": "200px"}
+        },
+        171: {
+            title: "Neutrino Buffers",
+            cost() {
+                let base = new Decimal(1.5)
+                if (player.e.upgrades.includes(22)) {
+                    base = base.sub(0.25)
+                }
+                return base.pow(base.pow(player.e.buyables[171]))
+            },
+            effect() {
+                let gain = player.e.buyables[171]
+                if (player.e.upgrades.includes(23)) {
+                    gain = gain.mul(50)
+                }
+                return gain
+            },
+            display() {
+                return `Reduces NG- debuffs and produce meta dimensions.
+                Currently: ${format(tmp.e.buyables[171].effect, 2)}
+                Cost: ${format(tmp.e.buyables[171].cost, 2)}
+                Amount: ${format(player.e.buyables[171], 2)}`
+            },
+            unlocked() {return player.e.upgrades.includes(15)},
+            canAfford() {return player.e.button2.neutrino.gte(tmp.e.buyables[171].cost)},
+            buy() {
+                player.e.button2.neutrino = player.e.button2.neutrino.sub(tmp.e.buyables[171].cost)
+                player.e.buyables[171] = player.e.buyables[171].add(1)
+            },
+            style: {"height": "100px", "width": "200px"}
+        }
+    },
+    clickables: {
+        11: {
+            title: "Generic Button #1",
+            display() {
+                return `Clicking this button while the bar below is between ${format(player.e.button1.min.mul(100), 2)}% and ${format(player.e.button1.max.mul(100), 2)}% will collide two particles successfully, gaining higgs bosons and increasing particle speed.<br>
+                If not clicked within this range, all higgs bosons are lost and particle speed resets.<br>
+                Your max higgs bosons is giving ${format(player.e.button1.eff, 2)} normal dimensions per second.`
+            },
+            unlocked() {return player.e.unlocked},
+            canClick() {return true},
+            onClick() {
+                if (player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max)) {
+                    let combo = new Decimal(1)
+                    if (player.e.upgrades.includes(11)) {
+                        combo = combo.add(1)
+                    }
+                    if (player.e.upgrades.includes(12)) {
+                        combo = combo.mul(2)
+                    }
+                    if (player.e.upgrades.includes(12)) {
+                        combo = combo.sqr()
+                    }
+                    let bpm = new Decimal(1)
+                    if (player.e.upgrades.includes(12)) {
+                        bpm = bpm.add(0.5)
+                    }
+                    if (player.e.upgrades.includes(13)) {
+                        bpm = bpm.sub(0.75)
+                    }
+                    player.e.button1.combo = player.e.button1.combo.add(combo)
+                    player.e.button1.bpm = player.e.button1.bpm.add(bpm)
+                    if (player.e.button1.combo.gt(player.e.button1.best)) {
+                        player.e.button1.best = player.e.button1.combo
+                    }
+                }
+                else {
+                    player.e.button1.combo = new Decimal(0)
+                    player.e.button1.bpm = new Decimal(10)
+                }
+            },
+            style: {"height": "200px", "width": "200px"}
+        },
+        12: {
+            title: "Generic Button #2",
+            display() {
+                return `Holding this button down will increase time multi.<br>
+                Time multi boosts all dimensions after debuffs.<br>
+                Currently: ${format(player.e.button2.timeff, 2)}x`
+            },
+            unlocked() {return player.e.upgrades.includes(15)},
+            canClick() {return true},
+            onHold() {
+                let mult = new Decimal(1)
+                player.e.button2.time = player.e.button2.time.add(new Decimal(0.05).mul(mult))
+            },
+            style: {"height": "200px", "width": "200px"}
+        }
+    },
+    bars: {
+        one: {
+            direction: RIGHT,
+            width: 200,
+            height: 50,
+            progress() {return player.e.button1.bar},
+            display() {
+                return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`
+            },
+            textStyle: {"color": "#888888"}
+        }
+    },
+    upgrades: {
+        11: {
+            fullDisplay() {
+                return `<h3>Ain't got rhythm</h3><br>
+                Increase the range for successful collisions and each successful collision gives +1 higgs boson.<br>
+                Req: 1e50 electrons`
+            },
+            canAfford() {return player.e.points.gte("1e50")},
+            pay() {return}
+        },
+        12: {
+            fullDisplay() {
+                return `<h3>A glimpse of QOL</h3><br>
+                Tau's second bar moves twice as fast and gain x2 higgs bosons, but successful collisions give +0.5 particle speed.<br>
+                Req: e8,000,000 tau particles`
+            },
+            unlocked() {return player.e.upgrades.includes(11)},
+            canAfford() {return player.l.tau.gte("e8000000")},
+            pay() {return}
+        },
+        13: {
+            fullDisplay() {
+                return `<h3>Bug: game sucks</h3><br>
+                Higgs boson effect ^10 and higgs boson gain ^2.<br>
+                Req: e9,250,000 tau particles`
+            },
+            unlocked() {return player.e.upgrades.includes(12)},
+            canAfford() {return player.l.tau.gte("e9250000")},
+            pay() {return}
+        },
+        14: {
+            fullDisplay() {
+                return `<h3>Quality of death</h3><br>
+                Particle speed per successful collision -0.75 and higgs boson's effect boosts tau gain.<br>
+                Req: e5,000,000 electrons<br>
+                Currently: ^${format(tmp.e.upgrades[14].effect, 2)}`
+            },
+            effect() {return player.e.button1.eff.add(10).log10()},
+            unlocked() {return player.e.upgrades.includes(13)},
+            canAfford() {return player.e.points.gte("e5000000")},
+            pay() {return}
+        },
+        15: {
+            fullDisplay() {
+                return `<h3>Yet another meta joke</h3><br>
+                Unlock meta dimensions.<br>
+                Req: e180,000,000 tau particles<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(14)},
+            canAfford() {return player.l.tau.gte("e180000000")},
+            pay() {return}
+        },
+        21: {
+            fullDisplay() {
+                return `<h3>Infinity</h3><br>
+                Neutrino gain debuff ^0.1.<br>
+                Req: 100 neutrinos<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(15)},
+            canAfford() {return player.e.button2.neutrino.gte(100)},
+            pay() {return}
+        },
+        22: {
+            fullDisplay() {
+                return `<h3>Eternity</h3><br>
+                Time multi ^2, and neutrino buffers have slower cost scaling.<br>
+                Req: 1,000 neutrinos<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(21)},
+            canAfford() {return player.e.button2.neutrino.gte(1000)},
+            pay() {return}
+        },
+        23: {
+            fullDisplay() {
+                return `<h3>Quantum</h3><br>
+                Neutrino buffer's effect x50.<br>
+                Req: e666,000,000 tau particles<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(22)},
+            canAfford() {return player.l.tau.gte("e666000000")},
+            pay() {return}
+        },
+        24: {
+            fullDisplay() {
+                return `<h3>Ghostify</h3><br>
+                Neutrino gain debuff ^0.5, and time multi ^2.<br>
+                Req: e925,000,000 tau particles<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(23)},
+            canAfford() {return player.l.tau.gte("e925000000")},
+            pay() {return}
+        },
+        25: {
+            fullDisplay() {
+                return `<h3>Pata-shu</h3><br>
+                Unlock [not yet].<br>
+                Req: x3,000 time multi<br>`
+            },
+            unlocked() {return player.e.upgrades.includes(24)},
+            canAfford() {return player.e.button2.timeff.gte(3000)},
+            pay() {return}
+        }
+    },
+    tabFormat: {
+        "Dims": {
+            content: [
+                [
+                    "display-text",
+                    function() {
+                        return `You have <h2 style='color: #224488; text-shadow: #224488 0px 0px 10px'>${format(player.e.points, 2)}</h2> electrons<br>
+                        Your electrons are raising tau gain to the ${format(tmp.e.effect, 2)}th power<br>
+                        Softcap mult: Every time the electron effect reaches a power of <h3 style='color: #224488; text-shadow: #224488 0px 0px 10px'>${format(player.e.softcap_mult, 2)}</h3>, it is softcapped. (log10(effect))`
+                    }
+                ],
+                ["buyable", 11],
+                ["buyable", 21]
+            ]
+        },
+        "Minigames": {
+            content: [
+                [
+                    "display-text",
+                    function() {
+                        return `Normal Dimensions: Particle Colliding<br><br>
+                        The current particle speed is ${format(player.e.button1.bpm, 2)} bpm<br>
+                        You have ${format(player.e.button1.combo, 2)} higgs bosons<br>
+                        Your best higgs bosons is ${format(player.e.button1.best, 2)}`
+                    }
+                ],
+                ["clickable", 11],
+                ["bar", "one"],
+                ["upgrades", [1]],
+                [
+                    "display-text",
+                    function() {
+                        if (player.e.upgrades.includes(15)) {
+                            let str = `Meta Dimensions: Neutrino Dimensions NG-${format(player.e.button2.ng, 2)}<br><br>
+                            Debuffs:<br>
+                            - You start with 1 dimension<br>
+                            - Neutrino gain ^1/${format(player.e.button2.ng, 2)}<br>
+                            - Multiplier per bought dimension, tickspeed, dimension shifts and boosts, and neutrino galaxies don't exist<br><br>
+                            You have ${format(player.e.button2.neutrino, 2)} neutrinos`
+                            return str
+                        }
+                    }
+                ],
+                ["clickable", 12],
+                ["buyable", 91],
+                ["buyable", 171],
+                ["upgrades", [2]]
+            ]
+        }
+    }
 })
