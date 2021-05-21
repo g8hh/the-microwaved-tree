@@ -2001,7 +2001,7 @@ addLayer("e", {
                 ["buyable", 21]
             ]
         },
-        "Minigames": {
+        "Tasks": {
             content: [
                 [
                     "display-text",
