@@ -164,7 +164,7 @@ addLayer("q", {
                 return [gain, cap]
             },
             display() {
-                return `Decrease point gain by 1, but gain 0.1% of points per second, up to ${tmp.q.buyables[12].effect[1]}.
+                return `Decrease point gain by 1 but gain 0.1% of points per second, up to ${tmp.q.buyables[12].effect[1]}.
                 Cost: 1 quark
                 Currently: ${format(tmp.q.buyables[12].effect[0], 2)}
                 Amount: ${player.q.buyables[12]}`
@@ -207,7 +207,7 @@ addLayer("q", {
                 return [pow, mult]
             },
             display() {
-                return `Point gain ^${format(tmp.q.buyables[13].effect[0], 2)}, but point gain ${format(tmp.q.buyables[13].effect[1], 2)}x afterwards, based on points.
+                return `Point gain ^${format(tmp.q.buyables[13].effect[0], 2)} but point gain ${format(tmp.q.buyables[13].effect[1], 2)}x afterwards, based on points.
                 Cost: 1 quark
                 Amount: ${player.q.buyables[13]}`
             },
@@ -327,7 +327,7 @@ addLayer("q", {
         21: {
             fullDisplay() {
                 return `<h3>Nice</h3><br>
-                Strange quark's positive effect is 69x stronger, but its negative effect is squared.<br>
+                Strange quark's positive effect is 69x stronger but its negative effect is squared.<br>
                 Cost: 3e7 points`
             },
             unlocked() {return player.q.upgrades.includes(15)},
@@ -1656,6 +1656,11 @@ addLayer("e", {
             time: new Decimal(0),
             timeff: new Decimal(1),
             eff: new Decimal(0)
+        },
+        button3: {
+            energy: new Decimal(0),
+            ptower: 1,
+            bar: new Decimal(0)
         }
     }},
     color: "#224488",
@@ -1722,12 +1727,36 @@ addLayer("e", {
             player.e.button2.neutrino = player.e.button2.neutrino.add(tmp.e.buyables[91].effect.mul(diff).mul(timeff1))
             player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[171].effect.mul(diff))
         }
+        // button 3
+        if (player.e.upgrades.includes(35)) {
+            let ptower = new Decimal(1)
+            if (player.e.upgrades.includes(41)) {
+                ptower = ptower.add(1)
+            }
+            if (player.e.upgrades.includes(42)) {
+                ptower = ptower.add(tmp.e.upgrades[42].effect)
+            }
+            if (player.e.upgrades.includes(43)) {
+                ptower = ptower.add(tmp.e.upgrades[43].effect)
+            }
+            if (player.e.upgrades.includes(44)) {
+                ptower = ptower.add(tmp.e.upgrades[44].effect)
+            }
+            player.e.button3.ptower = ptower
+        }
         // dimensions
         if (player.e.buyables[11].gte(1)) {
             player.e.points = player.e.points.add(tmp.e.buyables[11].effect.mul(diff))
         }
         if (player.e.buyables[21].gte(1)) {
             player.e.buyables[11] = player.e.buyables[11].add(tmp.e.buyables[21].effect.mul(diff))
+        }
+        if (player.e.buyables[31].gte(1)) {
+            player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[31].effect.mul(diff))
+        }
+        // neutrino dimensions
+        if (player.e.buyables[101].gte(1)) {
+            player.e.buyables[91] = player.e.buyables[91].add(tmp.e.buyables[101].effect.mul(diff))
         }
     },
     buyables: {
@@ -1763,6 +1792,22 @@ addLayer("e", {
             buy() {return},
             style: {"height": "100px", "width": "200px"}
         },
+        31: {
+            title: "Meta^2 Dimensions",
+            effect() {
+                let gain = new Decimal(10).pow(player.e.buyables[31])
+                return gain
+            },
+            display() {
+                return `Produces meta dimensions.
+                Currently: ${format(tmp.e.buyables[31].effect, 2)}/s
+                Amount: ${format(player.e.buyables[31], 2)}`
+            },
+            unlocked() {return player.e.upgrades.includes(35)},
+            canAfford() {return false},
+            buy() {return},
+            style: {"height": "100px", "width": "200px"}
+        },
         91: {
             title: "1st Neutrino Dimension",
             cost() {return new Decimal(1).mul(new Decimal(10).pow(player.e.buyables[91]))},
@@ -1775,7 +1820,14 @@ addLayer("e", {
                 if (player.e.upgrades.includes(24)) {
                     pow = pow.pow(0.5)
                 }
-                return gain.pow(pow)
+                let mult = new Decimal(1)
+                if (player.e.upgrades.includes(53)) {
+                    mult = mult.mul(tmp.e.upgrades[53].effect)
+                }
+                if (player.e.upgrades.includes(63)) {
+                    mult = mult.mul(tmp.e.upgrades[63].effect)
+                }
+                return gain.pow(pow).mul(mult)
             },
             display() {
                 return `Produces neutrinos.
@@ -1788,6 +1840,33 @@ addLayer("e", {
             buy() {
                 player.e.button2.neutrino = player.e.button2.neutrino.sub(tmp.e.buyables[91].cost)
                 player.e.buyables[91] = player.e.buyables[91].add(1)
+            },
+            style: {"height": "100px", "width": "200px"}
+        },
+        101: {
+            title: "2nd Neutrino Dimension",
+            cost() {return new Decimal(100).mul(new Decimal(1000).pow(player.e.buyables[101]))},
+            effect() {
+                let gain = player.e.buyables[101]
+                if (player.e.upgrades.includes(52)) {
+                    gain = gain.mul(tmp.e.upgrades[52].effect)
+                }
+                if (player.e.upgrades.includes(54)) {
+                    gain = gain.mul(player.e.button2.timeff)
+                }
+                return gain
+            },
+            display() {
+                return `Produces 1st neutrino dimensions.
+                Currently: ${format(tmp.e.buyables[101].effect, 2)}/s
+                Cost: ${format(tmp.e.buyables[101].cost, 2)}
+                Amount: ${format(player.e.buyables[101], 2)}`
+            },
+            unlocked() {return player.e.upgrades.includes(51)},
+            canAfford() {return player.e.button2.neutrino.gte(tmp.e.buyables[101].cost)},
+            buy() {
+                player.e.button2.neutrino = player.e.button2.neutrino.sub(tmp.e.buyables[101].cost)
+                player.e.buyables[101] = player.e.buyables[101].add(1)
             },
             style: {"height": "100px", "width": "200px"}
         },
@@ -1847,8 +1926,17 @@ addLayer("e", {
                     if (player.e.upgrades.includes(33)) {
                         combo = combo.mul(tmp.e.upgrades[33].effect)
                     }
-                    if (player.e.upgrades.includes(33)) {
+                    if (player.e.upgrades.includes(34)) {
                         combo = combo.mul(tmp.e.upgrades[34].effect)
+                    }
+                    if (player.e.upgrades.includes(61) && player.e.button1.bar.gte(0.49) && player.e.button1.bar.lte(0.51)) {
+                        combo = combo.mul(10)
+                    }
+                    if (player.e.upgrades.includes(62)) {
+                        combo = combo.mul(player.e.button1.bar.mul(100))
+                    }
+                    if (player.e.upgrades.includes(64)) {
+                        combo = combo.mul(tmp.e.upgrades[64].effect)
                     }
                     if (player.e.upgrades.includes(12)) {
                         combo = combo.sqr()
@@ -1877,7 +1965,7 @@ addLayer("e", {
             title: "Generic Button #2",
             display() {
                 return `Holding this button down will increase time multi.<br>
-                Time multi boosts all dimensions after debuffs.<br>
+                Time multi boosts 1st neutrino dimensions after debuffs.<br>
                 Currently: ${format(player.e.button2.timeff, 2)}x`
             },
             unlocked() {return player.e.upgrades.includes(15)},
@@ -1885,6 +1973,44 @@ addLayer("e", {
             onHold() {
                 let mult = new Decimal(1)
                 player.e.button2.time = player.e.button2.time.add(new Decimal(0.05).mul(mult))
+            },
+            style: {"height": "200px", "width": "200px"}
+        },
+        13: {
+            title: "Generic Button #3",
+            display() {
+                return `Holding this button down will fill up the bar below. Releasing the button before the bar is fully filled will give energy.<br>
+                If the bar is released after the bar is fully filled, it will not give any energy.`
+            },
+            unlocked() {return player.e.upgrades.includes(35)},
+            canClick() {return true},
+            onClick() {
+                let fill = new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01)
+                if (fill.lte(1)) {
+                    let gain = new Decimal(Math.E).tetrate(player.e.button3.ptower).tetrate(fill)
+                    player.e.button3.energy = player.e.button3.energy.add(gain)
+                    let dims = fill
+                    if (player.e.upgrades.includes(42)) {
+                        dims = dims.mul(2)
+                    }
+                    if (player.e.upgrades.includes(43)) {
+                        dims = dims.pow(2)
+                    }
+                    if (player.e.upgrades.includes(44)) {
+                        dims = dims.tetrate(2)
+                    }
+                    if (player.e.upgrades.includes(41)) {
+                        player.e.buyables[31] = player.e.buyables[31].add(dims)
+                    }
+                }
+                player.e.button3.bar = new Decimal(0)
+            },
+            onHold() {
+                let mult = new Decimal(1)
+                if (player.e.upgrades.includes(41)) {
+                    mult = mult.mul(3)
+                }
+                player.e.button3.bar = player.e.button3.bar.add(new Decimal(0.01).mul(mult))
             },
             style: {"height": "200px", "width": "200px"}
         }
@@ -1899,6 +2025,17 @@ addLayer("e", {
                 return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`
             },
             textStyle: {"color": "#888888"}
+        },
+        three: {
+            direction: RIGHT,
+            width: 200,
+            height: 50,
+            progress() {return new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01)},
+            display() {
+                return `Currently: ${format(new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01).mul(100), 2)}%`
+            },
+            textStyle: {"color": "#888888"},
+            unlocked() {return player.e.upgrades.includes(35)}
         }
     },
     upgrades: {
@@ -1914,7 +2051,7 @@ addLayer("e", {
         12: {
             fullDisplay() {
                 return `<h3>A glimpse of QOL</h3><br>
-                Tau's second bar moves twice as fast and gain x2 higgs bosons, but successful collisions give +0.5 particle speed.<br>
+                Tau's second bar moves twice as fast and gain x2 higgs bosons but successful collisions give +0.5 particle speed.<br>
                 Req: e8,000,000 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(11)},
@@ -1966,7 +2103,7 @@ addLayer("e", {
         22: {
             fullDisplay() {
                 return `<h3>Eternity</h3><br>
-                Time multi ^2, and neutrino buffers have slower cost scaling.<br>
+                Time multi ^2 and neutrino buffers have slower cost scaling.<br>
                 Req: 1,000 neutrinos`
             },
             unlocked() {return player.e.upgrades.includes(21)},
@@ -1986,7 +2123,7 @@ addLayer("e", {
         24: {
             fullDisplay() {
                 return `<h3>Ghostify</h3><br>
-                Neutrino gain debuff ^0.5, and time multi ^2.<br>
+                Neutrino gain debuff ^0.5 and time multi ^2.<br>
                 Req: e2e9 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(23)},
@@ -2052,11 +2189,175 @@ addLayer("e", {
         35: {
             fullDisplay() {
                 return `<h3>Hold notes</h3><br>
-                Unlock [not yet].<br>
-                Req: 2e9 best higgs bosons<br>`
+                Unlock meta^2 dimensions.<br>
+                Req: 2e9 best higgs bosons`
             },
             unlocked() {return player.e.upgrades.includes(34)},
             canAfford() {return player.e.button1.best.gte("2e9")},
+            pay() {return}
+        },
+        41: {
+            fullDisplay() {
+                return `<h3>Monster energy</h3><br>
+                The bar fills thrice as fast but increase power tower height by 1, and every time you successfully gain energy, you gain meta^2 dimensions equal to the percentage of the bar filled.<br>
+                Req: 10 energy`
+            },
+            unlocked() {return player.e.upgrades.includes(35)},
+            canAfford() {return player.e.button3.energy.gte(10)},
+            pay() {return}
+        },
+        42: {
+            fullDisplay() {
+                return `<h3>Kinetic</h3><br>
+                Energy boosts power tower height and meta^2 dimension gain x2.<br>
+                Req: 200 energy<br>
+                Currently: +${format(tmp.e.upgrades[42].effect, 2)}`
+            },
+            effect() {return player.e.button3.energy.slog().slog().add(1)},
+            unlocked() {return player.e.upgrades.includes(41)},
+            canAfford() {return player.e.button3.energy.gte(10)},
+            pay() {return}
+        },
+        43: {
+            fullDisplay() {
+                return `<h3>Electron-lytes</h3><br>
+                Best higgs bosons boost power tower height and meta^2 dimension gain ^2.<br>
+                Req: 1e24 energy<br>
+                Currently: +${format(tmp.e.upgrades[43].effect, 2)}`
+            },
+            effect() {return player.e.button1.best.slog().slog().add(1)},
+            unlocked() {return player.e.upgrades.includes(42)},
+            canAfford() {return player.e.button3.energy.gte(1e24)},
+            pay() {return}
+        },
+        44: {
+            fullDisplay() {
+                return `<h3>Quanta</h3><br>
+                Neutrinos boost power tower height and meta^2 dimension gain ^^2.<br>
+                Req: eee200 electrons<br>
+                Currently: +${format(tmp.e.upgrades[44].effect, 2)}`
+            },
+            effect() {return player.e.button2.neutrino.slog().slog().add(1)},
+            unlocked() {return player.e.upgrades.includes(43)},
+            canAfford() {return player.e.points.gte("eee200")},
+            pay() {return}
+        },
+        45: {
+            fullDisplay() {
+                return `<h3>Blue bulled</h3><br>
+                Unlock 5 new upgrades in the meta dimensions task.<br>
+                Req: e3.75e11 tau particles`
+            },
+            unlocked() {return player.e.upgrades.includes(44)},
+            canAfford() {return player.l.tau.gte("e3.75e11")},
+            pay() {return}
+        },
+        51: {
+            fullDisplay() {
+                return `<h3>100 is a little</h3><br>
+                Unlock the second dimension.<br>
+                Req: NG-68,420 or less`
+            },
+            unlocked() {return player.e.upgrades.includes(45)},
+            canAfford() {return player.e.button2.ng.lte(68420)},
+            pay() {return}
+        },
+        52: {
+            fullDisplay() {
+                return `<h3>Newtrinos</h3><br>
+                Neutrino buffers boost 2nd neutrino dimensions.<br>
+                Req: 100 1st neutrino dimensions<br>
+                Currently: x${format(tmp.e.upgrades[52].effect, 2)}`
+            },
+            effect() {return player.e.buyables[171].add(1)},
+            unlocked() {return player.e.upgrades.includes(51)},
+            canAfford() {return player.e.buyables[91].gte(100)},
+            pay() {return}
+        },
+        53: {
+            fullDisplay() {
+                return `<h3>Faster than sound</h3><br>
+                1st neutrino dimensions boost neutrino gain.<br>
+                Req: 50,000,000 neutrinos<br>
+                Currently: x${format(tmp.e.upgrades[53].effect, 2)}`
+            },
+            effect() {return player.e.buyables[91].add(10).log10()},
+            unlocked() {return player.e.upgrades.includes(52)},
+            canAfford() {return player.e.button2.neutrino.gte(50000000)},
+            pay() {return}
+        },
+        54: {
+            fullDisplay() {
+                return `<h3>Slower than light</h3><br>
+                Time multi boosts 2nd neutrino dimensions.<br>
+                Req: 21 neutrino buffers`
+            },
+            unlocked() {return player.e.upgrades.includes(53)},
+            canAfford() {return player.e.buyables[171].gte(21)},
+            pay() {return}
+        },
+        55: {
+            fullDisplay() {
+                return `<h3>NG^</h3><br>
+                Unlock 5 upgrades in the normal dimensions task.<br>
+                Req: 22 neutrino buffers`
+            },
+            unlocked() {return player.e.upgrades.includes(54)},
+            canAfford() {return player.e.buyables[171].gte(22)},
+            pay() {return}
+        },
+        61: {
+            fullDisplay() {
+                return `<h3>DDR</h3><br>
+                Clicking the button while the bar is between 49% and 51% will grant 10x higgs bosons.<br>
+                Req: 1e11 neutrinos`
+            },
+            unlocked() {return player.e.upgrades.includes(55)},
+            canAfford() {return player.e.button2.neutrino.gte(1e11)},
+            pay() {return}
+        },
+        62: {
+            fullDisplay() {
+                return `<h3>Jumpstream</h3><br>
+                Bar percentage boosts higgs boson gain.<br>
+                Req: 5e10 best higgs bosons`
+            },
+            unlocked() {return player.e.upgrades.includes(61)},
+            canAfford() {return player.e.button1.best.gte(5e10)},
+            pay() {return}
+        },
+        63: {
+            fullDisplay() {
+                return `<h3>Handstream</h3><br>
+                Higgs boson effect boosts neutrino gain.<br>
+                Req: 1e14 best higgs bosons<br>
+                Currently: x${format(tmp.e.upgrades[63].effect, 2)}`
+            },
+            effect() {return player.e.button1.eff.pow(0.01)},
+            unlocked() {return player.e.upgrades.includes(62)},
+            canAfford() {return player.e.button1.best.gte(1e14)},
+            pay() {return}
+        },
+        64: {
+            fullDisplay() {
+                return `<h3>Oni mode</h3><br>
+                Neutrinos boost higgs boson gain.<br>
+                Req: 1e13 neutrinos<br>
+                Currently: x${format(tmp.e.upgrades[64].effect, 2)}`
+            },
+            effect() {return player.e.button2.neutrino.pow(0.1)},
+            unlocked() {return player.e.upgrades.includes(63)},
+            canAfford() {return player.e.button2.neutrino.gte(1e13)},
+            pay() {return}
+        },
+        65: {
+            fullDisplay() {
+                return `<h3>Mines</h3><br>
+                Unlock [not yet].<br>
+                Req: 2e17 best higgs bosons`
+            },
+            unlocked() {return player.e.upgrades.includes(64)},
+            canAfford() {return player.e.button1.best.gte(2e17)},
             pay() {return}
         }
     },
@@ -2072,7 +2373,8 @@ addLayer("e", {
                     }
                 ],
                 ["buyable", 11],
-                ["buyable", 21]
+                ["buyable", 21],
+                ["buyable", 31]
             ]
         },
         "Tasks": {
@@ -2090,7 +2392,7 @@ addLayer("e", {
                 ["clickable", 11],
                 "blank",
                 ["bar", "one"],
-                ["upgrades", [1, 3]],
+                ["upgrades", [1, 3, 6]],
                 [
                     "display-text",
                     function() {
@@ -2108,8 +2410,28 @@ addLayer("e", {
                 "blank",
                 ["clickable", 12],
                 ["buyable", 91],
+                ["buyable", 101],
                 ["buyable", 171],
-                ["upgrades", [2]]
+                ["upgrades", [2, 5]],
+                [
+                    "display-text",
+                    function() {
+                        if (player.e.upgrades.includes(35)) {
+                            let str = `Meta^2 Dimensions: Particle Energizing<br><br>
+                            You have ${format(player.e.button3.energy, 2)} energy<br>
+                            Your power tower height is ${format(player.e.button3.ptower, 2)}<br>
+                            Energy gain is equal to:<br>
+                            (e^e^...^e)^^x<br>
+                            where the number of e's is equal to your power tower height`
+                            return str
+                        }
+                    }
+                ],
+                "blank",
+                ["clickable", 13],
+                "blank",
+                ["bar", "three"],
+                ["upgrades", [4]]
             ]
         }
     }
