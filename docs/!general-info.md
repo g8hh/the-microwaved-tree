@@ -4,6 +4,8 @@ Making a game in The Modding Tree mostly involves defining parameters or functio
 
 Beyond that, the main way to add content is through creating layers, often in [layers.js](/js/layers.js). You can add new layers by calling `addLayer(layername, layerdata)`. There is an example of a basic layer in [layers.js](/js/layers.js) showing the recommended method. It is just an example and can be freely deleted. You can also use it as a reference or a base for your own layers. 
 
+You can test your mod by opening the [index.html][/index.html] file in your browser.
+
 Most of the time, you won't need to dive deep into the code to create things, but you still can if you really want to, for example to add new Vue components in [components.js](/js/components.js).
 
 The Modding Tree uses [break\_eternity.js](https://github.com/Patashu/break_eternity.js) to store large values. This means that many numbers are `Decimal` objects, and must be treated differently. For example, you have to use `new Decimal(x)` to create a `Decimal` value instead of a plain number, and perform operations on them by calling functions. e.g, instead of `x = x + y`, use `x = x.add(y)`. Keep in mind this also applies to comparison operators, which should be replaced with calling the `.gt`, `.gte`, `.lt`, `.lte`, `.eq`, and `.neq` functions. See the [break\_eternity.js](https://github.com/Patashu/break_eternity.js) docs for more details on working with `Decimal` values.
@@ -18,7 +20,7 @@ While reading this documentation, the following key will be used when describing
 - **sometimes required**: This is may be required, depending on other things in the layer.
 - **optional**: You can leave this out if you don't intend to use that feature for the layer.
 - **assigned automagically**: This value will be set automatically and override any value you set.
-- **deprecated**: This feature is not recommended to be used anymore, and may be removed in future versions of TMT.
+- **deprecated**: This feature is not recommended to be used, because newer features are able to achieve the same thing in a better, easier way.
 
 ## Table of Contents
 
@@ -37,7 +39,7 @@ While reading this documentation, the following key will be used when describing
 
 - [Upgrades](upgrades.md): How to create upgrades for a layer.
 - [Milestones](milestones.md): How to create milestones for a layer.
-- [Buyables](buyables.md): Create rebuyable upgrades for your layer (with the option to make them respec-able). Can be used to make Enhancers or Space Buildings.
+- [Buyables](buyables.md): Create rebuyable upgrades for your layer (with the option to make them respec-able). Can be used to make Enhancers or Space Buildings, for example.
 - [Clickables](clickables.md): A more generalized variant of buyables, for any kind of thing that is sometimes clickable. Between these and Buyables, you can do just about anything.
 - [Achievements](achievements.md): How to create achievements for a layer (or for the whole game).
 
@@ -50,3 +52,4 @@ While reading this documentation, the following key will be used when describing
 - [Grids][grids.md]: Create a group buttons that behave the same, but have their own data. Good for map tiles, an inventory grid, and more!
 - [Infoboxes](infoboxes.md): Boxes containing text that can be shown or hidden.
 - [Trees](trees-and-tree-customization.md): Make your own trees. You can make non-layer button nodes too!
+- [Particle system](particles.md): Can be used to create particles for visual effects, but also interactable things like golden cookies or collectables.

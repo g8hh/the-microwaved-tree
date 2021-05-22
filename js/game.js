@@ -5,7 +5,7 @@ var scrolled = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.5.5.1",
+	tmtNum: "2.5.9.2",
 	tmtName: "Dreams Really Do Come True"
 }
 
@@ -80,7 +80,7 @@ function softcap(value, cap, power = 0.5) {
 // Return true if the layer should be highlighted. By default checks for upgrades only.
 function shouldNotify(layer){
 	for (id in tmp[layer].upgrades){
-		if (!isNaN(id)){
+		if (isPlainObject(layers[layer].upgrades[id])){
 			if (canAffordUpgrade(layer, id) && !hasUpgrade(layer, id) && tmp[layer].upgrades[id].unlocked){
 				return true
 			}
@@ -335,6 +335,7 @@ function gameLoop(diff) {
 	if (gameEnded && !player.keepGoing) {
 		diff = 0
 		player.tab = "gameEnded"
+		clearParticles()
 	}
 	if (player.devSpeed) diff *= player.devSpeed
 
@@ -369,7 +370,7 @@ function gameLoop(diff) {
 			let layer = TREE_LAYERS[x][item]
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) doReset(layer);
 			if (layers[layer].automate) layers[layer].automate();
-			if (layers[layer].autoUpgrade) autobuyUpgrades(layer)
+			if (tmp[layer].autoUpgrade) autobuyUpgrades(layer)
 		}
 	}
 
@@ -378,8 +379,8 @@ function gameLoop(diff) {
 			let layer = OTHER_LAYERS[row][item]
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) doReset(layer);
 			if (layers[layer].automate) layers[layer].automate();
-			player[layer].best = player[layer].best.max(player[layer].points)
-			if (layers[layer].autoUpgrade) autobuyUpgrades(layer)
+				player[layer].best = player[layer].best.max(player[layer].points)
+			if (tmp[layer].autoUpgrade) autobuyUpgrades(layer)
 		}
 	}
 
@@ -406,6 +407,7 @@ var interval = setInterval(function() {
 	ticking = true
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3
+	let trueDiff = diff
 	if (player.offTime !== undefined) {
 		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
 		if (player.offTime.remain > 0) {
@@ -427,7 +429,8 @@ var interval = setInterval(function() {
 	updateTabFormats()
 	gameLoop(diff)
 	fixNaNs()
-	adjustPopupTime(0.05) 
+	adjustPopupTime(trueDiff)
+	updateParticles(trueDiff)
 	ticking = false
 }, 50)
 

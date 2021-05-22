@@ -121,20 +121,17 @@ h1, h2, h3, b, input {
 
 .resetNotify {
 	box-shadow: var(--hqProperty2a), 0 0 8px #ffffff;
-	z-index: 3
 }
 
 .treeNode.can:hover {
 	transform: scale(1.15, 1.15);
 	box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
-	z-index: 4
 }
 
 .notify {
 	transform: scale(1.05, 1.05);
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), 0 0 20px #ff0000;
-	z-index: 3
 }
 
 .bought {
@@ -201,6 +198,8 @@ h1, h2, h3, b, input {
     position: absolute;
 	overflow: hidden;
 	margin-left: -0.5px;
+	transition-duration: 0.2s;
+
 }
 
 .overlayText {
@@ -265,6 +264,7 @@ h1, h2, h3, b, input {
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
+	position:relative;
 }
 
 .tile {
@@ -535,6 +535,7 @@ ul {
 
 .hChallenge {
 	background-color: #bf8f8f;
+	position: relative;
 	border: 4px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	color: rgba(0, 0, 0, 0.5);
@@ -705,7 +706,8 @@ button > * {
 	border-bottom: 0.7em solid transparent;
 	border-left: 0.3em solid transparent;
 	font-size: 10px;
-	overflow:auto
+	overflow:auto;
+	pointer-events: none;
 }
 
 .star {
@@ -721,6 +723,8 @@ button > * {
 	border-bottom: 0.7em solid #ffcc00;
 	border-left: 0.3em solid transparent;
 	font-size: 10px;
+	pointer-events: none;
+
 }
 
 .star:before, .star:after {

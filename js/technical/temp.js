@@ -45,6 +45,8 @@ function setupTemp() {
 	tmp.other = {
 		lastPoints: player.points || decimalZero,
 		oomps: decimalZero,
+		screenWidth: 0,
+		screenHeight: 0,
     }
 
 	updateWidth()
@@ -111,8 +113,8 @@ function updateTempData(layerData, tmpData, funcsData) {
 	
 	for (item in funcsData){
 		if (Array.isArray(layerData[item])) {
-			if (item === "tabFormat" || item === "content") return // These are only updated when needed
-			updateTempData(layerData[item], tmpData[item], funcsData[item])
+			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
+				updateTempData(layerData[item], tmpData[item], funcsData[item])
 		}
 		else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)){
 			updateTempData(layerData[item], tmpData[item], funcsData[item])
@@ -153,7 +155,7 @@ function updateClickableTemp(layer)
 
 function setupBuyables(layer) {
 	for (id in layers[layer].buyables) {
-		if (!isNaN(id)) {
+		if (isPlainObject(layers[layer].buyables[id])) {
 			let b = layers[layer].buyables[id]
 			b.actualCostFunction = b.cost
 			b.cost = function(x) {

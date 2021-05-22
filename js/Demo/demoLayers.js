@@ -6,7 +6,6 @@ addLayer("c", {
         name: "Candies", // This is optional, only used in a few places, If absent it just uses the layer id.
         symbol: "C", // This appears on the layer's node. Default is the id with the first letter capitalized
         position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-        marked: "discord.png",
         startData() { return {
             unlocked: true,
 			points: new Decimal(0),
@@ -301,7 +300,7 @@ addLayer("c", {
                     ["main-display",
                     "prestige-button", "resource-display",
                     ["blank", "5px"], // Height
-                    ["raw-html", function() {return "<button onclick='console.log(`yeet`)'>'HI'</button>"}],
+                    ["raw-html", function() {return "<button onclick='console.log(`yeet`); makeParticles(textParticle)'>'HI'</button>"}],
                     ["display-text", "Name your points!"],
                     ["text-input", "thingy"],
                     ["display-text",
@@ -319,7 +318,7 @@ addLayer("c", {
                     ["buyables", ""], "blank",
                     ["row", [
                         ["toggle", ["c", "beep"]], ["blank", ["30px", "10px"]], // Width, height
-                        ["layer-proxy", ["f", ["prestige-button"]]], "blank", ["v-line", "200px"],
+                        ["display-text", function() {return "Beep"}], "blank", ["v-line", "200px"],
                         ["column", [
                             ["prestige-button", "", {'width': '150px', 'height': '80px'}],
                             ["prestige-button", "", {'width': '100px', 'height': '150px'}],
@@ -377,6 +376,7 @@ addLayer("c", {
                          // Layer will automatically highlight if an upgrade is purchasable.
             return (player.c.buyables[11] == 1)
         },
+        marked: "discord.png",
         resetDescription: "Melt your points into ",
 })
 
@@ -427,7 +427,6 @@ addLayer("f", {
     canReset() {
         return tmp[this.layer].baseAmount.gte(tmp[this.layer].nextAt)
     },
-
     // This is also non minimal, a Clickable!
     clickables: {
 
@@ -457,6 +456,7 @@ addLayer("f", {
                         player[this.layer].clickables[this.id] = "Maybe that's a bit too far..."
                         break;                        
                     case "Maybe that's a bit too far...":
+                        makeParticles(coolParticle, 4)
                         player[this.layer].clickables[this.id] = "Borkened..."
                         break;
                     default:
@@ -526,6 +526,7 @@ addLayer("a", {
                 onComplete() {console.log("Bork bork bork!")}
             },
         },
+        midsection: ["grid", "blank"],
         grid: {
             maxRows: 3,
             rows: 2,
@@ -537,7 +538,7 @@ addLayer("a", {
                 return true
             },
             getCanClick(data, id) {
-                return true
+                return player.points.eq(10)
             },
             getStyle(data, id) {
                 return {'background-color': '#'+ (data*1234%999999)}
@@ -549,9 +550,48 @@ addLayer("a", {
                 return "Gridable #" + id
             },
             getDisplay(data, id) {
-                return data 
+                return data
             },
-        } ,
-        midsection: ["grid", "blank"]
-    }
+        },
+    },
 )
+
+const coolParticle = {
+    image:"options_wheel.png",
+    spread: 20,
+    gravity: 2,
+    time: 3,
+    rotation (id) {
+        return 20 * (id - 1.5) + (Math.random() - 0.5) * 10
+    },
+    dir() {
+        return (Math.random() - 0.5) * 10
+    },
+    speed() {
+        return (Math.random() + 1.2) * 8 
+    },
+    onClick() {
+        console.log("yay")
+    },
+    onMouseOver() {
+        console.log("hi")
+    },
+    onMouseLeave() {
+        console.log("bye")
+    },
+    update() {
+        //this.width += 1
+        //setDir(this, 135)
+    },
+    layer: 'f',
+}
+
+const textParticle = {
+    spread: 20,
+    gravity: 0,
+    time: 3,
+    speed: 0,
+    text: function() { return "<h1 style='color:yellow'>" + format(player.points)},
+    offset: 30,
+    fadeInTime: 1,
+}

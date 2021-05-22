@@ -52,9 +52,12 @@ function achievementStyle(layer, id){
 
 function updateWidth() {
 	var screenWidth = window.innerWidth
+
 	var splitScreen = screenWidth >= 1024
 	if (player.forceOneTab) splitScreen = false
 	tmp.other.screenWidth = screenWidth
+	tmp.other.screenHeight = window.innerHeight
+
 	tmp.other.splitScreen = splitScreen
 	tmp.other.lastPoints = player.points
 }
@@ -143,9 +146,7 @@ function constructTabFormat(layer, id, family){
 
 	}
 	if (isFunction(tabLayer)) {
-		
-		let bound = tabLayer.bind(layers[layer])
-		Vue.set(tabTemp, key, bound())
+		return tabLayer()
 	}
 	updateTempData(tabLayer, tabTemp, tabFunc)
 	return tabTemp
@@ -173,7 +174,7 @@ function updateTabFormat(layer) {
 
 	// Check for embedded layer
 	if (isPlainObject(tmp[layer].tabFormat) && tmp[layer].tabFormat[tab].embedLayer !== undefined) { 
-		constructTabFormat(tmp[layer].tabFormat[tab].embedLayer)
+		updateTabFormat(tmp[layer].tabFormat[tab].embedLayer)
 	}
 
 	// Update microtabs
@@ -183,9 +184,9 @@ function updateTabFormat(layer) {
 		if (tmp[layer].microtabs[family][tab]) {
 
 			if (tmp[layer].microtabs[family][tab].embedLayer)
-				constructTabFormat(tmp[layer].microtabs[family][tab].embedLayer)
+				updateTabFormat(tmp[layer].microtabs[family][tab].embedLayer)
 			else
-				constructTabFormat(layer, tab, family)
+				Vue.set(temp[layer].microtabs[family][tab], 'content', constructTabFormat(layer, tab, family))
 		}
 	}
 }
