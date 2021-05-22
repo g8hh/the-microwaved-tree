@@ -525,10 +525,10 @@ addLayer("q", {
             fullDisplay() {
                 return `<h3>Wait a sec...</h3><br>
                 Neutrality's first effect can go above one.<br>
-                Req: 3,430 points per second in a Type-3 simulation`
+                Req: 4,050 points per second in a Type-3 simulation`
             },
             unlocked() {return player.q.upgrades.includes(55)},
-            canAfford() {return getPointGen().gte(3430) && player.l.activeChallenge === 13},
+            canAfford() {return getPointGen().gte(4050) && player.l.activeChallenge === 13},
             pay() {return}
         },
         53: {
@@ -545,10 +545,10 @@ addLayer("q", {
             fullDisplay() {
                 return `<h3>The last unoriginal upgrade?</h3><br>
                 Neutrality's third effect can go above one.<br>
-                Req: 24,900 points per second in a Type-3 simulation`
+                Req: 25,000 points per second in a Type-3 simulation`
             },
             unlocked() {return player.q.upgrades.includes(53)},
-            canAfford() {return getPointGen().gte(24900) && player.l.activeChallenge === 13},
+            canAfford() {return getPointGen().gte(25000) && player.l.activeChallenge === 13},
             pay() {return}
         },
         55: {
@@ -577,30 +577,30 @@ addLayer("q", {
             fullDisplay() {
                 return `<h3>Good feature coming in 3...</h3><br>
                 Unoriginality exponent is multiplied by pi.<br>
-                Req: 1,375,000 points per second in a Type-3 simulation`
+                Req: 1,380,000 points per second in a Type-3 simulation`
             },
             unlocked() {return player.q.upgrades.includes(61)},
-            canAfford() {return getPointGen().gte(1375000) && player.l.activeChallenge === 13},
+            canAfford() {return getPointGen().gte(1380000) && player.l.activeChallenge === 13},
             pay() {return}
         },
         63: {
             fullDisplay() {
                 return `<h3>2...</h3><br>
                 Unoriginality exponent +0.35.<br>
-                Req: 1,530,000 points per second in a Type-3 simulation`
+                Req: 1,537,500 points per second in a Type-3 simulation`
             },
             unlocked() {return player.q.upgrades.includes(62)},
-            canAfford() {return getPointGen().gte(1530000) && player.l.activeChallenge === 13},
+            canAfford() {return getPointGen().gte(1537500) && player.l.activeChallenge === 13},
             pay() {return}
         },
         64: {
             fullDisplay() {
                 return `<h3>1...</h3><br>
                 Unoriginality exponent +0.01 after multiplier.<br>
-                Req: 1,560,000 points per second in a Type-3 simulation`
+                Req: e5.166e25 points`
             },
             unlocked() {return player.q.upgrades.includes(63)},
-            canAfford() {return getPointGen().gte(1560000) && player.l.activeChallenge === 13},
+            canAfford() {return player.points.gte("ee25.71317653")},
             pay() {return}
         },
         65: {
@@ -1012,8 +1012,8 @@ addLayer("l", {
         21: {
             name: "Type-4",
             challengeDescription: "Neutrality does nothing and point gain after simulation log ^^0.25.",
-            goalDescription: "5,300 points per second",
-            canComplete() {return getPointGen().gte(5300)},
+            goalDescription: "5,400 points per second",
+            canComplete() {return getPointGen().gte(5400)},
             rewardDescription: "Point gain ^lepton effect",
             unlocked() {return player.q.upgrades.includes(61)},
             onEnter() {
@@ -1256,8 +1256,8 @@ addLayer("l", {
                         if (player.q.upgrades.includes(55)) {
                             str += `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[5], 2)}</h2>th power, 
                             multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[6], 2)}</h2> and raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[7], 2)}</h2>th power<br>`
-                        str += `You can have ${player.l.cap} alignments at a time`
                         }
+                        str += `You can have ${player.l.cap} alignments at a time`
                         if (player.l.unlocked) {return str}
                     }
                 ],
@@ -1275,7 +1275,7 @@ addLayer("l", {
                 ],
                 "challenges"
             ],
-            unlocked: false
+            unlocked() {return player.q.upgrades.includes(45)}
         },
         "Tau": {
             content: [
@@ -1295,7 +1295,9 @@ addLayer("l", {
                         }
                     }
                 ],
+                "blank",
                 "buyables",
+                "blank",
                 [
                     "display-text",
                     function() {
@@ -1317,12 +1319,8 @@ addLayer("l", {
                 ["bar", "two"],
                 "upgrades"
             ],
-            unlocked: false
+            unlocked() {return player.q.upgrades.includes(65)}
         }
-    },
-    thisIsTheStupidestThingIveEverDoneInMyEntireLife() {
-        tmp.l.tabFormat.Muons.unlocked = player.q.upgrades.includes(45)
-        tmp.l.tabFormat.Tau.unlocked = player.q.upgrades.includes(65)
     }
 })
 addLayer("a", {
@@ -1418,12 +1416,12 @@ addLayer("a", {
             fullDisplay() {
                 return `<h3>Nightrogen</h3><br>
                 Hightrogen's effect starts at 1.75 and chaos's effect boosts good's effect.<br>
-                Req: 2e9 points per second in a Type-1 simulation<br>
+                Req: 3e9 points per second in a Type-1 simulation<br>
                 Currently: /${format(tmp.a.upgrades[13].effect, 2)}`
             },
             effect() {return tmp.l.effect[2].pow(0.05)},
             unlocked() {return player.a.upgrades.includes(12)},
-            canAfford() {return getPointGen().gte(2e9) && player.l.activeChallenge === 11},
+            canAfford() {return getPointGen().gte(3e9) && player.l.activeChallenge === 11},
             pay() {return}
         },
         14: {
@@ -1570,10 +1568,10 @@ addLayer("u", {
             fullDisplay() {
                 return `<h3>Stranger things</h3><br>
                 Strange quarks's negative effect ^^0.01 and point gain ^log10(log10(positive effect)).<br>
-                Req: 267,000 points per second in a Type-3 simulation<br>`
+                Req: 269,000 points per second in a Type-3 simulation<br>`
             },
             unlocked() {return player.u.milestones.includes("6")},
-            canAfford() {return getPointGen().gte(267000) && player.l.activeChallenge === 13},
+            canAfford() {return getPointGen().gte(269000) && player.l.activeChallenge === 13},
             pay() {return}
         },
         12: {
@@ -1590,10 +1588,10 @@ addLayer("u", {
             fullDisplay() {
                 return `<h3>Haha, wouldn't it be funny if unoriginality had an unoriginal upgrade?</h3><br>
                 Point gain ^(0.99^-0.99).<br>
-                Req: 3,254 quarks<br>`
+                Req: e5.166e20 points<br>`
             },
             unlocked() {return player.u.upgrades.includes(12)},
-            canAfford() {return player.q.points.gte(3254)},
+            canAfford() {return player.points.gte("ee20.71313578")},
             pay() {return}
         },
         14: {
@@ -1609,7 +1607,7 @@ addLayer("u", {
         15: {
             fullDisplay() {
                 return `<h3>9 Charm 4</h3><br>
-                Unlocks charm quarks and you can choose one more alignment<br>
+                Unlocks charm quarks and you can choose one more alignment.<br>
                 Req: e5.781e20 points per second<br>
                 Currently: ^${format(tmp.q.upgrades[51].effect, 2)}`
             },
@@ -1677,6 +1675,14 @@ addLayer("e", {
     position: 1,
     branches: ["a", "u"],
     tooltip: "",
+    glowColor() {
+        for ([key, value] of Object.entries(tmp.e.upgrades)) {
+            if (value.canAfford && !(player.e.upgrades.includes(key))) {
+                return "#0000ff"
+            }
+        }
+        return false
+    },
     type: "normal",
     baseResource: "",
     baseAmount: new Decimal(1),
@@ -1890,7 +1896,7 @@ addLayer("e", {
                 Increase the range for successful collisions and each successful collision gives +1 higgs boson.<br>
                 Req: 1e50 electrons`
             },
-            canAfford() {return player.e.points.gte("1e50")},
+            canAfford() {return player.e.points.gte(1e50)},
             pay() {return}
         },
         12: {
@@ -1907,10 +1913,10 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Bug: game sucks</h3><br>
                 Higgs boson effect ^10 and higgs boson gain ^2.<br>
-                Req: e9,250,000 tau particles`
+                Req: e10,000,000 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(12)},
-            canAfford() {return player.l.tau.gte("e9250000")},
+            canAfford() {return player.l.tau.gte("e10000000")},
             pay() {return}
         },
         14: {
@@ -1969,10 +1975,10 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Ghostify</h3><br>
                 Neutrino gain debuff ^0.5, and time multi ^2.<br>
-                Req: e925,000,000 tau particles<br>`
+                Req: e2e9 tau particles<br>`
             },
             unlocked() {return player.e.upgrades.includes(23)},
-            canAfford() {return player.l.tau.gte("e925000000")},
+            canAfford() {return player.l.tau.gte("e2e9")},
             pay() {return}
         },
         25: {
@@ -2012,7 +2018,9 @@ addLayer("e", {
                         Your best higgs bosons is ${format(player.e.button1.best, 2)}`
                     }
                 ],
+                "blank",
                 ["clickable", 11],
+                "blank",
                 ["bar", "one"],
                 ["upgrades", [1]],
                 [
@@ -2029,6 +2037,7 @@ addLayer("e", {
                         }
                     }
                 ],
+                "blank",
                 ["clickable", 12],
                 ["buyable", 91],
                 ["buyable", 171],
