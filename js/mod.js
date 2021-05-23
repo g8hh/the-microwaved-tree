@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.6.1",
-	name: "red bull gives you inflation",
+	num: "0.6.1.1",
+	name: "higgs bezos",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -68,7 +68,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- energy exist now<br>
 		- added stuff until 30th electron upgrade<br>
 		- what is a man? a miserable pile of upgrades<br>
-		- next up: top and bottom quarks and maybe alignments<br>`
+		- next up: top and bottom quarks and maybe alignments<br>
+	<h3>v0.6.1.1</h3><br>
+		- higgs bosons exist now<br>
+		- added nothing lol<br>
+		- full combo<br>
+		- next up: meta<br>`
 
 let winText = `youre done pog`
 

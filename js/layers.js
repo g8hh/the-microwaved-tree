@@ -511,7 +511,7 @@ addLayer("q", {
             fullDisplay() {
                 return `<h3>The unoriginality is back baby</h3><br>
                 Point gain is increased based on points.<br>
-                Cost: e185,534,014 points
+                Cost: e185,534,014 points<br>
                 Currently: ^${format(tmp.q.upgrades[51].effect, 2)}`
             },
             effect() {return player.points.add(10).slog().div(2).min(2)},
@@ -825,6 +825,9 @@ addLayer("l", {
         }
         if (player.l.upgrades.includes(15)) {
             let gain = new Decimal(1e24).mul(player.l.tau.add(10).log10())
+            if (player.e.upgrades.includes(62)) {
+                gain = gain.mul(tmp.e.upgrades[62].effect)
+            }
             player.l.taueff = player.l.taueff.add(gain.mul(diff))
             player.l.taugain = gain
         }
@@ -1643,8 +1646,11 @@ addLayer("e", {
         softcap_mult: new Decimal(10),
         button1: {
             bpm: new Decimal(10),
+            // swapped because of bad decisions
             combo: new Decimal(0),
+            higgs: new Decimal(0),
             best: new Decimal(0),
+            keep: new Decimal(0.9),
             min: new Decimal(0.4),
             max: new Decimal(0.6),
             bar: new Decimal(0),
@@ -1703,9 +1709,15 @@ addLayer("e", {
                 player.e.button1.min = new Decimal(0.35)
                 player.e.button1.max = new Decimal(0.65)
             }
+            if (player.e.upgrades.includes(32)) {
+                player.e.button1.keep = new Decimal(0.91)
+            }
+            if (player.e.upgrades.includes(32)) {
+                player.e.button1.keep = new Decimal(0.93)
+            }
             let eff1 = player.e.button1.best.add(1).log10()
             if (player.e.upgrades.includes(32)) {
-                eff1 = new Decimal(10).pow(eff1)
+                eff1 = eff1.pow(1.5)
             }
             if (player.e.upgrades.includes(13)) {
                 eff1 = eff1.pow(10)
@@ -1905,15 +1917,15 @@ addLayer("e", {
         11: {
             title: "Generic Button #1",
             display() {
-                return `Clicking this button while the bar below is between ${format(player.e.button1.min.mul(100), 2)}% and ${format(player.e.button1.max.mul(100), 2)}% will collide two particles successfully, gaining higgs bosons and increasing particle speed.<br>
-                If not clicked within this range, all higgs bosons are lost and particle speed resets.<br>
+                return `Clicking this button while the bar below is between ${format(player.e.button1.min.mul(100), 2)}% and ${format(player.e.button1.max.mul(100), 2)}% will collide two particles successfully, gaining combo and higgs bosons, and increasing particle speed.<br>
+                If not clicked within this range, combo and ${format(new Decimal(1).sub(player.e.button1.keep).mul(100), 2)}% of higgs bosons are lost and particle speed resets.<br>
                 Your best higgs bosons are producing ${format(player.e.button1.eff, 2)} normal dimensions per second.`
             },
             unlocked() {return player.e.unlocked},
             canClick() {return true},
             onClick() {
                 if (player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max)) {
-                    let combo = new Decimal(1)
+                    let combo = player.e.button1.higgs.add(2).log2()
                     if (player.e.upgrades.includes(11)) {
                         combo = combo.add(1)
                     }
@@ -1929,7 +1941,7 @@ addLayer("e", {
                     if (player.e.upgrades.includes(34)) {
                         combo = combo.mul(tmp.e.upgrades[34].effect)
                     }
-                    if (player.e.upgrades.includes(61) && player.e.button1.bar.gte(0.49) && player.e.button1.bar.lte(0.51)) {
+                    if (player.e.upgrades.includes(61) && player.e.button1.bar.gte(0.45) && player.e.button1.bar.lte(0.55)) {
                         combo = combo.mul(10)
                     }
                     if (player.e.upgrades.includes(62)) {
@@ -1948,6 +1960,7 @@ addLayer("e", {
                     if (player.e.upgrades.includes(13)) {
                         bpm = bpm.sub(0.75)
                     }
+                    player.e.button1.higgs = player.e.button1.higgs.add(1)
                     player.e.button1.combo = player.e.button1.combo.add(combo)
                     player.e.button1.bpm = player.e.button1.bpm.add(bpm)
                     if (player.e.button1.combo.gt(player.e.button1.best)) {
@@ -1955,7 +1968,15 @@ addLayer("e", {
                     }
                 }
                 else {
-                    player.e.button1.combo = new Decimal(0)
+                    player.e.button1.higgs = new Decimal(0)
+                    let keep = new Decimal(0.9)
+                    if (player.e.upgrades.includes(31)) {
+                        keep = keep.add(0.01)
+                    }
+                    if (player.e.upgrades.includes(61)) {
+                        keep = keep.add(0.02)
+                    }
+                    player.e.button1.combo = player.e.button1.combo.mul(keep)
                     player.e.button1.bpm = new Decimal(10)
                 }
             },
@@ -1998,6 +2019,9 @@ addLayer("e", {
                     }
                     if (player.e.upgrades.includes(44)) {
                         dims = dims.tetrate(2)
+                    }
+                    if (player.e.upgrades.includes(64)) {
+                        dims = dims.mul(tmp.e.upgrades[64].effect)
                     }
                     if (player.e.upgrades.includes(41)) {
                         player.e.buyables[31] = player.e.buyables[31].add(dims)
@@ -2072,22 +2096,22 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Quality of death</h3><br>
                 Particle speed per successful collision -0.75 and higgs boson's effect boosts tau gain.<br>
-                Req: e5,000,000 electrons<br>
+                Req: e100,000,000 electrons<br>
                 Currently: ^${format(tmp.e.upgrades[14].effect, 2)}`
             },
-            effect() {return player.e.button1.eff.add(10).log10()},
+            effect() {return player.e.button1.eff.add(10).log10().min(15)},
             unlocked() {return player.e.upgrades.includes(13)},
-            canAfford() {return player.e.points.gte("e5000000")},
+            canAfford() {return player.e.points.gte("e100000000")},
             pay() {return}
         },
         15: {
             fullDisplay() {
                 return `<h3>Yet another meta joke</h3><br>
                 Unlock meta dimensions.<br>
-                Req: e180,000,000 tau particles`
+                Req: e333,333,333 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(14)},
-            canAfford() {return player.l.tau.gte("e180000000")},
+            canAfford() {return player.l.tau.gte("e333333333")},
             pay() {return}
         },
         21: {
@@ -2114,20 +2138,20 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Quantum</h3><br>
                 Neutrino buffer's effect x50.<br>
-                Req: e666,000,000 tau particles`
+                Req: e900,000,000 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(22)},
-            canAfford() {return player.l.tau.gte("e666000000")},
+            canAfford() {return player.l.tau.gte("e900000000")},
             pay() {return}
         },
         24: {
             fullDisplay() {
                 return `<h3>Ghostify</h3><br>
                 Neutrino gain debuff ^0.5 and time multi ^2.<br>
-                Req: e2e9 tau particles`
+                Req: e2.4e9 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(23)},
-            canAfford() {return player.l.tau.gte("e2e9")},
+            canAfford() {return player.l.tau.gte("e2.4e9")},
             pay() {return}
         },
         25: {
@@ -2143,7 +2167,7 @@ addLayer("e", {
         31: {
             fullDisplay() {
                 return `<h3>Osu</h3><br>
-                Best higgs bosons boost higgs boson gain.<br>
+                Best higgs bosons boost higgs boson gain and lose 1% less higgs bosons on unsuccessful collisions.<br>
                 Req: 1,000,000 neutrinos<br>
                 Currently: x${format(tmp.e.upgrades[31].effect, 2)}`
             },
@@ -2155,11 +2179,11 @@ addLayer("e", {
         32: {
             fullDisplay() {
                 return `<h3>Polyrhythmic</h3><br>
-                Higgs boson effect is linear.<br>
-                Req: e2.4e9 tau particles`
+                Higgs boson effect ^1.5.<br>
+                Req: e3.2e9 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(31)},
-            canAfford() {return player.l.tau.gte("e2.4e9")},
+            canAfford() {return player.l.tau.gte("e3.2e9")},
             pay() {return}
         },
         33: {
@@ -2178,22 +2202,22 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Funk nights at friday</h3><br>
                 Higgs bosons boost higgs boson gain.<br>
-                Req: e5e10 tau particles<br>
+                Req: e6.8e9 tau particles<br>
                 Currently: x${format(tmp.e.upgrades[34].effect, 2)}`
             },
             effect() {return player.e.button1.combo.add(10).log10()},
             unlocked() {return player.e.upgrades.includes(33)},
-            canAfford() {return player.l.tau.gte("e5e10")},
+            canAfford() {return player.l.tau.gte("e6.8e9")},
             pay() {return}
         },
         35: {
             fullDisplay() {
                 return `<h3>Hold notes</h3><br>
                 Unlock meta^2 dimensions.<br>
-                Req: 2e9 best higgs bosons`
+                Req: e7.7e9 tau particles`
             },
             unlocked() {return player.e.upgrades.includes(34)},
-            canAfford() {return player.e.button1.best.gte("2e9")},
+            canAfford() {return player.l.tau.gte("e7.7e9")},
             pay() {return}
         },
         41: {
@@ -2215,7 +2239,7 @@ addLayer("e", {
             },
             effect() {return player.e.button3.energy.slog().slog().add(1)},
             unlocked() {return player.e.upgrades.includes(41)},
-            canAfford() {return player.e.button3.energy.gte(10)},
+            canAfford() {return player.e.button3.energy.gte(200)},
             pay() {return}
         },
         43: {
@@ -2246,10 +2270,10 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Blue bulled</h3><br>
                 Unlock 5 new upgrades in the meta dimensions task.<br>
-                Req: e3.75e11 tau particles`
+                Req: eee1000 electrons`
             },
             unlocked() {return player.e.upgrades.includes(44)},
-            canAfford() {return player.l.tau.gte("e3.75e11")},
+            canAfford() {return player.e.points.gte("eee1000")},
             pay() {return}
         },
         51: {
@@ -2309,7 +2333,7 @@ addLayer("e", {
         61: {
             fullDisplay() {
                 return `<h3>DDR</h3><br>
-                Clicking the button while the bar is between 49% and 51% will grant 10x higgs bosons.<br>
+                Clicking the button while the bar is between 45% and 55% will grant 10x higgs bosons and lose 2% less higgs bosons on unsuccessful collisions.<br>
                 Req: 1e11 neutrinos`
             },
             unlocked() {return player.e.upgrades.includes(55)},
@@ -2319,29 +2343,31 @@ addLayer("e", {
         62: {
             fullDisplay() {
                 return `<h3>Jumpstream</h3><br>
-                Bar percentage boosts higgs boson gain.<br>
-                Req: 5e10 best higgs bosons`
+                Bar percentage boosts higgs boson gain, and best higgs bosons boost tau effect.<br>
+                Req: e5.2e10 tau particles<br>
+                Currently: x${format(player.e.button1.bar.mul(100), 2)}, x${format(tmp.e.upgrades[62].effect, 2)}`
             },
+            effect() {return player.e.button1.best.add(10).log10()},
             unlocked() {return player.e.upgrades.includes(61)},
-            canAfford() {return player.e.button1.best.gte(5e10)},
+            canAfford() {return player.l.tau.gte("e5.2e10")},
             pay() {return}
         },
         63: {
             fullDisplay() {
                 return `<h3>Handstream</h3><br>
                 Higgs boson effect boosts neutrino gain.<br>
-                Req: 1e14 best higgs bosons<br>
+                Req: e2e38 points<br>
                 Currently: x${format(tmp.e.upgrades[63].effect, 2)}`
             },
-            effect() {return player.e.button1.eff.pow(0.01)},
+            effect() {return player.e.button1.eff.add(10).log10()},
             unlocked() {return player.e.upgrades.includes(62)},
-            canAfford() {return player.e.button1.best.gte(1e14)},
+            canAfford() {return player.points.gte("e2e38")},
             pay() {return}
         },
         64: {
             fullDisplay() {
                 return `<h3>Oni mode</h3><br>
-                Neutrinos boost higgs boson gain.<br>
+                Neutrinos boost higgs boson gain and meta^2 dimensions after tetration.<br>
                 Req: 1e13 neutrinos<br>
                 Currently: x${format(tmp.e.upgrades[64].effect, 2)}`
             },
@@ -2354,10 +2380,10 @@ addLayer("e", {
             fullDisplay() {
                 return `<h3>Mines</h3><br>
                 Unlock [not yet].<br>
-                Req: 2e17 best higgs bosons`
+                Req: eee25,000 electrons`
             },
             unlocked() {return player.e.upgrades.includes(64)},
-            canAfford() {return player.e.button1.best.gte(2e17)},
+            canAfford() {return player.e.points.gte("eee25000")},
             pay() {return}
         }
     },
@@ -2385,6 +2411,7 @@ addLayer("e", {
                         return `Normal Dimensions: Particle Colliding<br><br>
                         The current particle speed is ${format(player.e.button1.bpm, 2)} bpm<br>
                         You have ${format(player.e.button1.combo, 2)} higgs bosons<br>
+                        You have ${format(player.e.button1.higgs, 2)} combo, boosting higgs boson gain by x${format(player.e.button1.higgs.add(2).log2(), 2)}<br>
                         Your best higgs bosons is ${format(player.e.button1.best, 2)}`
                     }
                 ],
