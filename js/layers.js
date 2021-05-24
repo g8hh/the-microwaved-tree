@@ -1229,6 +1229,7 @@ addLayer("l", {
             display() {
                 return `Currently: ${format(player.l.progbar1.mul(100), 2)}%`
             },
+            fillStyle() {return player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max) ? {"background-color": "#77bf5f", "transition-duration": "0.25s"} : {"background-color": "#ffffff", "transition-duration": "0.25s"}},
             textStyle: {"color": "#888888"},
             unlocked() {return player.l.upgrades.includes(11)}
         },
@@ -2048,7 +2049,7 @@ addLayer("e", {
             display() {
                 return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`
             },
-            fillStyle: {"color": "#ffffff", "transition-duration": "0.05s"},
+            fillStyle() {return player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max) ? {"background-color": "#77bf5f", "transition-duration": "0.1s"} : {"background-color": "#ffffff", "transition-duration": "0.1s"}},
             textStyle: {"color": "#888888"}
         },
         three: {
@@ -2059,7 +2060,12 @@ addLayer("e", {
             display() {
                 return `Currently: ${format(new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01).mul(100), 2)}%`
             },
-            fillStyle: {"color": "#ffffff", "transition-duration": "0.05s"},
+            fillStyle() {
+                let fill = new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01)
+                if (fill.lte(.5)) {return {"background-color": "#77bf5f", "transition-duration": "0.05s"}}
+                if (fill.lte(.75)) {return {"background-color": "#ffa500", "transition-duration": "0.05s"}}
+                return {"background-color": "#ff0000", "transition-duration": "0.05s"}
+            },
             textStyle: {"color": "#888888"},
             unlocked() {return player.e.upgrades.includes(35)}
         }
