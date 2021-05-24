@@ -2048,6 +2048,7 @@ addLayer("e", {
             display() {
                 return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`
             },
+            fillStyle: {"color": "#ffffff", "transition-duration": "0.05s"},
             textStyle: {"color": "#888888"}
         },
         three: {
@@ -2058,6 +2059,7 @@ addLayer("e", {
             display() {
                 return `Currently: ${format(new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01).mul(100), 2)}%`
             },
+            fillStyle: {"color": "#ffffff", "transition-duration": "0.05s"},
             textStyle: {"color": "#888888"},
             unlocked() {return player.e.upgrades.includes(35)}
         }
