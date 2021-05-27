@@ -49,11 +49,7 @@ function format(decimal, precision = 2, small) {
     }
     if (decimal.sign < 0) return "-" + format(decimal.neg(), precision)
     if (decimal.mag == Number.POSITIVE_INFINITY) return "Infinity"
-    if (decimal.gte("eeee1000")) {
-        var slog = decimal.slog()
-        if (slog.gte(1e6)) return "F" + format(slog.floor())
-        else return Decimal.pow(10, slog.sub(slog.floor())).toStringWithDecimalPlaces(3) + "F" + commaFormat(slog.floor(), 0)
-    }
+    if (decimal.gte("eeee1000")) {return "F" + format(decimal.slog(), 3)}
     else if (decimal.gte("1ee9")) return exponentialFormat(decimal, precision, false)
     else if (decimal.gte(1e9)) return exponentialFormat(decimal, precision)
     else if (decimal.gte(1e3)) return commaFormat(decimal, 0)

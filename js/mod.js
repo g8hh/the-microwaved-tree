@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.6.1.1",
-	name: "higgs bezos",
+	num: "0.7",
+	name: "got 100 upgrades but originality aint one",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -73,7 +73,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- higgs bosons exist now<br>
 		- added nothing lol<br>
 		- full combo<br>
-		- next up: meta<br>`
+		- next up: meta<br>
+	<h3>v0.6.2</h3><br>
+		- meta^3 dimensions exist now now<br>
+		- added stuff until 50th (thats a few more than i remembered) electron upgrade<br>
+		- im actually running out of ideas dont expect this to be updated for a while ill do smtn else<br>
+		- next up: how many people actually know what the og chemistree was please tell<br>`
 
 let winText = `youre done pog`
 
@@ -101,6 +106,9 @@ function getPointGen() {
 	}
 	if (player.l.challenges[12] === 1) {
 		gain = gain.mul(6.9e69)
+	}
+	if (player.e.upgrades.includes(74)) {
+		gain = gain.mul(new Decimal(10).pow(player.l.taueff).pow(0.01))
 	}
 
 	if (player.q.upgrades.includes(14)) {
@@ -171,6 +179,9 @@ function getPointGen() {
 	}
 	if (player.l.challenges[21] === 1) {
 		gain = gain.pow(tmp.l.effect[0])
+	}
+	if (player.e.upgrades.includes(82)) {
+		gain = gain.pow(player.e.button3.ptower)
 	}
 	if (player.q.buyables[13].gte(1)) {
 		gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])
