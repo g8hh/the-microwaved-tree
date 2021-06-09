@@ -997,7 +997,7 @@ addLayer("l", {
                 Req: 2.5e348 tau particles<br>
                 Currently: ^${format(tmp.l.upgrades[22].effect, 2)}`
             },
-            effect() {return player.l.tau.add(1).log10().add(10).log(10)},
+            effect() {return player.l.tau.add(1).log10().add(10).log10()},
             unlocked() {return player.l.upgrades.includes(21)},
             canAfford() {return player.l.tau.gte("2.5e348")},
             pay() {return}
@@ -1155,10 +1155,10 @@ addLayer("a", {
     ],
     style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     effect() {
-        let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2)))).max(0.009999)
+        let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2)))).min(0.009999)
         return eff
     },
-    effectDescription() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)} ${tmp.a.effect.lte(0.009999) ? "(hardcapped)" : ""}`},
+    effectDescription() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)} ${tmp.a.effect.gte(0.009999) ? "(hardcapped)" : ""}`},
     layerShown() {return player.q.upgrades.includes(35) || player.a.unlocked},
     symbol: "A",
     position: 0,
