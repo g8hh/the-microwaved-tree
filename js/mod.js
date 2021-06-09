@@ -134,7 +134,7 @@ function getPointGen() {
 	if (player.u.upgrades.includes(13)) {gain = gain.pow(new Decimal(0.99).pow(-0.99))}
 	if (player.l.challenges[21] === 1) {gain = gain.pow(tmp.l.effect[0])}
 	if (player.e.upgrades.includes(82)) {gain = gain.pow(player.e.button3.ptower)}
-	if (tmp.ali.effect.gte(1)) {gain = gain.pow(gain.log10().pow(tmp.ali.effect.sub(1)))}
+	if (tmp.ali.effect.gte(1)) {gain = gain.pow(gain.add(10).log10().pow(tmp.ali.effect.sub(1)))}
 	if (player.q.buyables[13].gte(1)) {gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])}
 	if (player.l.upgrades.includes(15)) {gain = gain.mul(new Decimal(10).pow(player.l.taueff))}
 	if (player.l.activeChallenge === 12) {gain = gain.tetrate(0.1)}
