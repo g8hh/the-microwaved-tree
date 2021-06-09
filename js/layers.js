@@ -2,7 +2,7 @@ addLayer("q", {
     name: "quarks",
     startData() {return {
         unlocked: true,
-		points: new Decimal(0),
+        points: new Decimal(0),
         best: new Decimal(0),
         spent: new Decimal(0)
     }},
@@ -13,75 +13,60 @@ addLayer("q", {
         {
             key: "q",
             description: "q: reset your points for quarks",
-            onPress() { if (player.q.unlocked && canReset("q")) doReset("q") }
+            onPress() {if (player.q.unlocked && canReset("q")) doReset("q")}
         },
         {
             key: "U",
             description: "shift+u: buys up quarks",
-            onPress() { if (player.q.unlocked && tmp.q.buyables[11].canAfford) tmp.q.buyables[11].buy() }
+            onPress() {if (player.q.unlocked && tmp.q.buyables[11].canAfford) tmp.q.buyables[11].buy()}
         },
         {
             key: "D",
             description: "shift+d: buys down quarks",
-            onPress() { if (player.q.unlocked && tmp.q.buyables[12].canAfford) tmp.q.buyables[12].buy() }
+            onPress() {if (player.q.unlocked && tmp.q.buyables[12].canAfford) tmp.q.buyables[12].buy()}
         },
         {
             key: "S",
             description: "shift+s: buys strange quarks",
-            onPress() { if (player.q.unlocked && tmp.q.buyables[13].canAfford) tmp.q.buyables[13].buy() }
+            onPress() {if (player.q.unlocked && tmp.q.buyables[13].canAfford) tmp.q.buyables[13].buy()}
         }
     ],
+    style() {if (player.bruh) {
+        drawTree()
+        return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}
+    }},
     symbol: "Q",
     position: 0,
     type: "static",
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     baseResource: "points",
     baseAmount() {return player.points},
     requires: new Decimal(1),
     exponent() {
         let exp = player.q.best.div(100).add(1)
-        if (player.l.unlocked) {
-            exp = exp.mul(tmp.l.effect[3])
-        }
-        if (player.q.upgrades.includes(53)) {
-            exp = exp.mul(tmp.l.effect[6])
-        }
-        if (player.q.best.gte(1000)) {
-            exp  = exp.mul(2)
-        }
-        if (player.q.best.gte(1100)) {
-            exp  = exp.mul(player.q.best.div(1100))
-        }
-        if (player.q.best.gte(2000)) {
-            exp  = exp.mul(player.q.best.div(1500))
-        }
-        if (player.q.best.gte(3000)) {
-            exp  = exp.pow(player.q.best.div(3000))
-        }
+        if (player.l.unlocked) {exp = exp.mul(tmp.l.effect[3])}
+        if (player.q.upgrades.includes(53)) {exp = exp.mul(tmp.l.effect[6])}
+        if (player.q.best.gte(1000)) {exp = exp.mul(2)}
+        if (player.q.best.gte(1100)) {exp = exp.mul(player.q.best.div(1100))}
+        if (player.q.best.gte(2000)) {exp = exp.mul(player.q.best.div(1500))}
+        if (player.q.best.gte(3000)) {exp = exp.pow(player.q.best.div(3000))}
         return exp
     },
     base: 2,
     autoPrestige() {return player.q.upgrades.includes(31)},
     doReset(layer) {
         if (tmp[layer].row == 0) {return}
-        if (layer === "a") { 
+        if (layer === "a") {
             if (!(player.a.milestones.includes("1"))) {
                 player.q.upgrades = []
-                if (player.a.milestones.includes("0")) {
-                    player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25]
-                }
+                if (player.a.milestones.includes("0")) {player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25]}
             }
         }
-        if (layer === "u") { 
+        if (layer === "u") {
             player.q.upgrades = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35]
-            if (player.u.milestones.includes("2")) {
-                player.q.upgrades.push(41, 42, 43, 44, 45)
-            }
-            if (player.u.milestones.includes("3")) {
-                player.q.upgrades.push(51, 55)
-            }
-            if (player.u.milestones.includes("4")) {
-                player.q.upgrades.push(52, 53, 54)
-            }
+            if (player.u.milestones.includes("2")) {player.q.upgrades.push(41, 42, 43, 44, 45)}
+            if (player.u.milestones.includes("3")) {player.q.upgrades.push(51, 55)}
+            if (player.u.milestones.includes("4")) {player.q.upgrades.push(52, 53, 54)}
         }
     },
     resetsNothing() {return player.a.milestones.includes("2")},
@@ -90,16 +75,10 @@ addLayer("q", {
             title: "Up Quark",
             cost() {return new Decimal(1)},
             effect() {
-                let gain = new Decimal(player.q.buyables[11])
-                if (player.q.upgrades.includes(11)) {
-                    gain = gain.mul(3)
-                }
-                if (player.l.unlocked) {
-                    gain = gain.pow(tmp.l.effect[1])
-                }
-                if (player.q.upgrades.includes(54)) {
-                    gain = gain.pow(tmp.l.effect[7])
-                }
+                let gain = player.q.buyables[11]
+                if (player.q.upgrades.includes(11)) {gain = gain.mul(3)}
+                if (player.l.unlocked) {gain = gain.pow(tmp.l.effect[1])}
+                if (player.q.upgrades.includes(54)) {gain = gain.pow(tmp.l.effect[7])}
                 return gain
             },
             display() {
@@ -128,39 +107,21 @@ addLayer("q", {
             title: "Down Quark",
             cost() {return new Decimal(1)},
             effect() {
-                let cap = new Decimal(100).mul(player.q.buyables[12])
+                let cap = player.q.buyables[12].mul(100)
                 let gain = player.points.div(1000).mul(player.q.buyables[12]).sub(player.q.buyables[12])
                 if (player.q.upgrades.includes(22) && gain.gte(cap) && cap.gte(1)) {
                     let logbase = 10
-                    if (player.q.upgrades.includes(31)) {
-                        logbase -= 8.75
-                    }
-                    if (player.q.upgrades.includes(32)) {
-                        logbase -= 0.2
-                    }
-                    if (player.q.upgrades.includes(33)) {
-                        logbase -= 0.04
-                    }
-                    if (player.a.unlocked) {
-                        logbase -= tmp.a.effect
-                    }
-                    if (player.a.milestones.includes("0")) {
-                        logbase **= 0.02
-                    }
-                    if (player.points.gte("1ee12")) {
-                        logbase = 10
-                    }
+                    if (player.q.upgrades.includes(31)) {logbase -= 8.75}
+                    if (player.q.upgrades.includes(32)) {logbase -= 0.2}
+                    if (player.q.upgrades.includes(33)) {logbase -= 0.04}
+                    if (player.a.unlocked) {logbase -= tmp.a.effect}
+                    if (player.a.milestones.includes("0")) {logbase **= 0.02}
+                    if (player.points.gte("1ee12")) {logbase = 10}
                     gain = gain.log(logbase).mul(cap)
                 }
-                else {
-                    gain = gain.min(cap)
-                }
-                if (player.l.unlocked) {
-                    gain = gain.mul(tmp.l.effect[2])
-                }
-                if (player.q.upgrades.includes(13)) {
-                    gain = gain.mul(tmp.q.upgrades[13].effect)
-                }
+                else {gain = gain.min(cap)}
+                if (player.l.unlocked) {gain = gain.mul(tmp.l.effect[2])}
+                if (player.q.upgrades.includes(13)) {gain = gain.mul(tmp.q.upgrades[13].effect)}
                 return [gain, cap]
             },
             display() {
@@ -190,20 +151,14 @@ addLayer("q", {
             cost() {return new Decimal(2)},
             effect() {
                 let pow = new Decimal(0.9).pow(player.q.buyables[13].sqrt())
-                let mult = player.points.gte(10000) ? player.points.div(1000).log10().sqr().pow(player.q.buyables[13].gte(1) ? player.q.buyables[13].log10().add(1) : new Decimal(1)) : new Decimal(1)
+                let mult = player.points.gte(10000) ? player.points.div(1000).log10().sqr().pow(player.q.buyables[13].max(1).log10().add(1)) : new Decimal(1)
                 if (player.q.upgrades.includes(21)) {
                     pow = pow.sqr()
                     mult = mult.mul(69)
                 }
-                if (player.u.upgrades.includes(11)) {
-                    pow = pow.tetrate(0.01)
-                }
-                if (player.u.upgrades.includes(12)) {
-                    mult = mult.pow(new Decimal(1).div(pow.min(1)))
-                }
-                if (player.u.upgrades.includes(14)) {
-                    pow = pow.sqrt()
-                }
+                if (player.u.upgrades.includes(11)) {pow = pow.tetrate(0.01)}
+                if (player.u.upgrades.includes(12)) {mult = mult.pow(pow.min(1).pow(-1))}
+                if (player.u.upgrades.includes(14)) {pow = pow.sqrt()}
                 return [pow, mult]
             },
             display() {
@@ -232,7 +187,7 @@ addLayer("q", {
             title: "Charm Quark",
             cost() {return new Decimal(1000)},
             effect() {
-                let exp = new Decimal(0.25).mul(player.q.buyables[21]).add(1).sqrt()
+                let exp = player.q.buyables[21].mul(0.25).add(1).sqrt()
                 return exp
             },
             display() {
@@ -266,9 +221,7 @@ addLayer("q", {
                 Cost: 100 points`
             },
             canAfford() {return player.points.gte(100)},
-            pay() {
-                player.points = player.points.sub(100)
-            }
+            pay() {player.points = player.points.sub(100)}
         },
         12: {
             fullDisplay() {
@@ -277,12 +230,10 @@ addLayer("q", {
                 Cost: 500 points<br>
                 Currently: ${format(tmp.q.upgrades[12].effect, 2)}x`
             },
-            effect() {return player.q.points.sqrt()},
+            effect() {return player.q.points.max(1).sqrt()},
             unlocked() {return player.q.upgrades.includes(11)},
             canAfford() {return player.points.gte(500)},
-            pay() {
-                player.points = player.points.sub(500)
-            }
+            pay() {player.points = player.points.sub(500)}
         },
         13: {
             fullDisplay() {
@@ -294,9 +245,7 @@ addLayer("q", {
             effect() {return player.q.buyables[11].add(1).sqrt()},
             unlocked() {return player.q.upgrades.includes(12)},
             canAfford() {return player.points.gte(5000)},
-            pay() {
-                player.points = player.points.sub(5000)
-            }
+            pay() {player.points = player.points.sub(5000)}
         },
         14: {
             fullDisplay() {
@@ -305,12 +254,10 @@ addLayer("q", {
                 Cost: 20,000 points<br>
                 Currently: ^${format(tmp.q.upgrades[14].effect, 2)}`
             },
-            effect() {return new Decimal(1.25).pow(new Decimal(1).div(player.q.buyables[11].sub(player.q.buyables[12]).abs().add(1)).sqrt())},
+            effect() {return new Decimal(1.25).root(player.q.buyables[11].sub(player.q.buyables[12]).abs().add(1).sqrt())},
             unlocked() {return player.q.upgrades.includes(13)},
             canAfford() {return player.points.gte(20000)},
-            pay() {
-                player.points = player.points.sub(20000)
-            }
+            pay() {player.points = player.points.sub(20000)}
         },
         15: {
             fullDisplay() {
@@ -320,21 +267,17 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(14)},
             canAfford() {return player.points.gte(1000000)},
-            pay() {
-                player.points = player.points.sub(1000000)
-            }
+            pay() {player.points = player.points.sub(1000000)}
         },
         21: {
             fullDisplay() {
                 return `<h3>Nice</h3><br>
-                Strange quark's positive effect is 69x stronger but its negative effect is squared.<br>
+                Strange quark's positive effect is 69x stronger but its negative effect ^2.<br>
                 Cost: 3e7 points`
             },
             unlocked() {return player.q.upgrades.includes(15)},
             canAfford() {return player.points.gte(3e7)},
-            pay() {
-                player.points = player.points.sub(3e7)
-            }
+            pay() {player.points = player.points.sub(3e7)}
         },
         22: {
             fullDisplay() {
@@ -344,9 +287,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(21)},
             canAfford() {return player.points.gte(1e9)},
-            pay() {
-                player.points = player.points.sub(1e9)
-            }
+            pay() {player.points = player.points.sub(1e9)}
         },
         23: {
             fullDisplay() {
@@ -356,9 +297,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(22)},
             canAfford() {return player.points.gte(1e10)},
-            pay() {
-                player.points = player.points.sub(1e10)
-            }
+            pay() {player.points = player.points.sub(1e10)}
         },
         24: {
             fullDisplay() {
@@ -368,9 +307,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(23)},
             canAfford() {return player.points.gte(1e13)},
-            pay() {
-                player.points = player.points.sub(1e13)
-            }
+            pay() {player.points = player.points.sub(1e13)}
         },
         25: {
             fullDisplay() {
@@ -380,9 +317,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(24)},
             canAfford() {return player.points.gte(1e18)},
-            pay() {
-                player.points = player.points.sub(1e18)
-            }
+            pay() {player.points = player.points.sub(1e18)}
         },
         31: {
             fullDisplay() {
@@ -392,9 +327,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(25)},
             canAfford() {return player.points.gte(1e36)},
-            pay() {
-                player.points = player.points.sub(1e36)
-            }
+            pay() {player.points = player.points.sub(1e36)}
         },
         32: {
             fullDisplay() {
@@ -404,9 +337,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(31)},
             canAfford() {return player.points.gte(2.5e41)},
-            pay() {
-                player.points = player.points.sub(2.5e41)
-            }
+            pay() {player.points = player.points.sub(2.5e41)}
         },
         33: {
             fullDisplay() {
@@ -416,21 +347,17 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(32)},
             canAfford() {return player.points.gte(2.5e44)},
-            pay() {
-                player.points = player.points.sub(2.5e44)
-            }
+            pay() {player.points = player.points.sub(2.5e44)}
         },
         34: {
             fullDisplay() {
                 return `<h3>No more unoriginality</h3><br>
-                Lepton's effect is squared.<br>
+                Lepton's effect ^2.<br>
                 Cost: 1e48 points`
             },
             unlocked() {return player.q.upgrades.includes(33)},
             canAfford() {return player.points.gte(1e48)},
-            pay() {
-                player.points = player.points.sub(1e48)
-            }
+            pay() {player.points = player.points.sub(1e48)}
         },
         35: {
             fullDisplay() {
@@ -440,9 +367,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(34)},
             canAfford() {return player.points.gte(1e90)},
-            pay() {
-                player.points = player.points.sub(1e90)
-            }
+            pay() {player.points = player.points.sub(1e90)}
         },
         41: {
             fullDisplay() {
@@ -452,9 +377,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(35)},
             canAfford() {return player.points.gte("e56950")},
-            pay() {
-                player.points = player.points.sub("e56950")
-            }
+            pay() {player.points = player.points.sub("e56950")}
         },
         42: {
             fullDisplay() {
@@ -464,9 +387,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(41)},
             canAfford() {return player.points.gte("e171882")},
-            pay() {
-                player.points = player.points.sub("e171882")
-            }
+            pay() {player.points = player.points.sub("e171882")}
         },
         43: {
             fullDisplay() {
@@ -475,14 +396,13 @@ addLayer("q", {
                 Cost: e951,762 points`
             },
             effect() {
-                let eff = new Decimal(4).mul(tmp.u.effect[2])
+                let eff = new Decimal(4)
+                if (player.u.unlocked) {eff = eff.mul(tmp.u.effect[2])}
                 return eff
             },
             unlocked() {return player.q.upgrades.includes(42)},
             canAfford() {return player.points.gte("e951762")},
-            pay() {
-                player.points = player.points.sub("e951762")
-            }
+            pay() {player.points = player.points.sub("e951762")}
         },
         44: {
             fullDisplay() {
@@ -491,9 +411,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(43)},
             canAfford() {return player.points.gte("e7373905")},
-            pay() {
-                player.points = player.points.sub("e7373905")
-            }
+            pay() {player.points = player.points.sub("e7373905")}
         },
         45: {
             fullDisplay() {
@@ -503,9 +421,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(44)},
             canAfford() {return player.points.gte("e7500000")},
-            pay() {
-                player.points = player.points.sub("e7500000")
-            }
+            pay() {player.points = player.points.sub("e7500000")}
         },
         51: {
             fullDisplay() {
@@ -517,9 +433,7 @@ addLayer("q", {
             effect() {return player.points.add(10).slog().div(2).min(2)},
             unlocked() {return player.q.upgrades.includes(45)},
             canAfford() {return player.points.gte("e185534014")},
-            pay() {
-                player.points = player.points.sub("e185534014")
-            }
+            pay() {player.points = player.points.sub("e185534014")}
         },
         52: {
             fullDisplay() {
@@ -559,9 +473,7 @@ addLayer("q", {
             },
             unlocked() {return player.q.upgrades.includes(51)},
             canAfford() {return player.points.gte("e9104627203")},
-            pay() {
-                player.points = player.points.sub("e9104627203")
-            }
+            pay() {player.points = player.points.sub("e9104627203")}
         },
         61: {
             fullDisplay() {
@@ -629,7 +541,7 @@ addLayer("l", {
     name: "leptons",
     startData() {return {
         unlocked: false,
-		points: new Decimal(0),
+        points: new Decimal(0),
         best: new Decimal(0),
         tau: new Decimal(0),
         tauprod: new Decimal(0),
@@ -656,50 +568,35 @@ addLayer("l", {
         {
             key: "l",
             description: "l: reset your points for leptons",
-            onPress() { if (player.l.unlocked && canReset("l")) doReset("l") }
+            onPress() {if (player.l.unlocked && canReset("l")) doReset("l")}
         },
         {
             key: "r",
             description: "r: respec lepton alignments",
-            onPress() { if (player.l.unlocked) tmp.l.clickables.masterButtonPress() }
+            onPress() {if (player.l.unlocked) tmp.l.clickables.masterButtonPress()}
         }
     ],
+    style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     effect() {
         let strength = player.l.points.sqrt().add(2).log2().sqrt()
-        if (player.q.upgrades.includes(34)) {
-            strength = strength.sqr()
-        }
-        if (player.l.challenges[11] === 1) {
-            strength = strength.mul(1.25)
-        }
-        if (player.l.activeChallenge === 11) {
-            strength = strength.sqrt()
-        }
-        if (player.l.activeChallenge === 13) {
-            strength = new Decimal(1)
-        }
-        let al1 = new Decimal(2).mul(player.l.law.gte(1) ? player.l.law : new Decimal(0.5)).pow(strength)
+        if (player.q.upgrades.includes(34)) {strength = strength.sqr()}
+        if (player.l.challenges[11] === 1) {strength = strength.mul(1.25)}
+        if (player.l.activeChallenge === 11) {strength = strength.sqrt()}
+        if (player.l.activeChallenge === 13) {strength = new Decimal(1)}
+        let al1 = player.l.law.max(0.5).mul(2).pow(strength)
         let al2 = new Decimal(10).pow(player.l.chaos).pow(strength)
         let al3 = new Decimal(0.5).pow(player.l.good.sqrt()).pow(strength.sqrt())
-        if (player.a.upgrades.includes(13)) {
-            al3 = al3.div(tmp.a.upgrades[13].effect)
-        }
-        let al4 = new Decimal(1.25).mul(player.l.evil.gte(1) ? player.l.evil : new Decimal(0.8)).pow(strength)
+        if (player.a.upgrades.includes(13)) {al3 = al3.div(tmp.a.upgrades[13].effect)}
+        let al4 = player.l.evil.max(0.8).mul(1.25).pow(strength)
         let al51 = new Decimal(1)
         if (player.q.upgrades.includes(52)) {
             al51 = new Decimal(1.25).pow(player.l.neutral).pow(strength)
-            if (player.a.upgrades.includes(12)) {
-                al51 = al51.sqr()
-            }
+            if (player.a.upgrades.includes(12)) {al51 = al51.sqr()}
         }
         let al52 = new Decimal(1)
-        if (player.q.upgrades.includes(53)) {
-            al52 = new Decimal(0.9).pow(player.l.neutral).pow(strength)
-        }
+        if (player.q.upgrades.includes(53)) {al52 = new Decimal(0.9).pow(player.l.neutral).pow(strength)}
         let al53 = new Decimal(1)
-        if (player.q.upgrades.includes(54)) {
-            al53 = new Decimal(2).pow(player.l.neutral).pow(strength)
-        }
+        if (player.q.upgrades.includes(54)) {al53 = new Decimal(2).pow(player.l.neutral).pow(strength)}
         if (player.l.activeChallenge === 21) {
             al51 = new Decimal(1)
             al52 = new Decimal(1)
@@ -712,6 +609,7 @@ addLayer("l", {
     symbol: "L",
     position: 1,
     branches: ["q"],
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     type: "static",
     baseResource: "points",
     baseAmount() {return player.points},
@@ -721,9 +619,8 @@ addLayer("l", {
     autoPrestige() {return player.u.milestones.includes("5")},
     gainMult() {
         let mult = new Decimal(1)
-        if (player.l.points.eq(118)) {
-            mult = mult.div("e6990299")
-        }
+        // balance
+        if (player.l.points.eq(118)) {mult = mult.div("e6990299")}
         return mult
     },
     doReset(layer) {
@@ -734,100 +631,56 @@ addLayer("l", {
                 player.l.best = new Decimal(0)
             }
         }
-        if (layer === "u") { 
-            player.l.points = new Decimal(100).add(player.u.points).min(200)
-            player.l.best = new Decimal(100).add(player.u.points).min(200)
-            if (!(player.u.milestones.includes("3"))) {
-                tmp.l.clickables.masterButtonPress()
-            }
+        if (layer === "u") {
+            player.l.points = player.u.points.add(100).min(200)
+            player.l.best = player.u.points.add(100).min(200)
+            if (!(player.u.milestones.includes("3"))) {tmp.l.clickables.masterButtonPress()}
         }
     },
     resetsNothing() {return player.u.milestones.includes("2")},
     alignmentCap() {
-        let cap = 1
-        if (player.a.milestones.includes("2")) {
-            cap += 1
-        }
-        if (player.l.challenges[13] == 1) {
-            cap += 1
-        }
-        if (player.u.upgrades.includes(15)) {
-            cap += 1
-        }
+        let cap = 1 + player.a.milestones.includes("2") + (player.l.challenges[13] === 1) + player.u.upgrades.includes(15)
         player.l.cap = new Decimal(cap)
     },
     challengeCompletions() {
         let comps = 0
-        for ([key, value] of Object.entries(player.l.challenges)) {
-            comps += value
-        }
+        for ([key, value] of Object.entries(player.l.challenges)) {comps += value}
         player.l.comps = new Decimal(comps)
     },
-    update(diff) {
-        // tau stuff
+    tauProduction() {
         let gain = player.l.tau.add(10).log10()
-        if (player.l.upgrades.includes(13)) {
-            gain = gain.mul((Math.sin(player.l.progbar2)+1)*5)
-        }
-        if (player.l.buyables[12].gte(1)) {
-            gain = gain.pow(tmp.l.buyables[12].effect)
-        }
-        if (player.l.buyables[11].gte(1)) {
-            gain = gain.mul(tmp.l.buyables[11].effect)
-        }
-        if (player.l.buyables[13].gte(1)) {
-            gain = gain.pow(tmp.l.buyables[13].effect)
-        }
-        if (player.l.upgrades.includes(14)) {
-            gain = gain.pow(1.5)
-        }
-        if (player.l.upgrades.includes(21)) {
-            gain = gain.pow(tmp.l.upgrades[21].effect)
-        }
-        if (player.l.upgrades.includes(22)) {
-            gain = gain.pow(tmp.l.upgrades[22].effect)
-        }
-        if (player.l.upgrades.includes(23)) {
-            gain = gain.pow((Math.sin(player.l.progbar2)+1)*5)
-        }
-        if (player.l.upgrades.includes(24)) {
-            gain = gain.sqr()
-        }
-        if (tmp.e.effect.gte(1)) {
-            gain = gain.pow(tmp.e.effect)
-        }
-        if (player.e.upgrades.includes(14)) {
-            gain = gain.pow(tmp.e.upgrades[14].effect)
-        }
-        if (player.l.upgrades.includes(11) && player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max)) {
-            gain = gain.sqr()
-        }
-        if (player.q.upgrades.includes(65)) {
-            player.l.tau = player.l.tau.add(gain.mul(diff))
-            player.l.tauprod = gain
-        }
+        if (player.l.upgrades.includes(13)) {gain = gain.mul((Math.sin(player.l.progbar2)+1)*5)}
+        if (player.l.buyables[12].gte(1)) {gain = gain.pow(tmp.l.buyables[12].effect)}
+        if (player.l.buyables[11].gte(1)) {gain = gain.mul(tmp.l.buyables[11].effect)}
+        if (player.l.buyables[13].gte(1)) {gain = gain.pow(tmp.l.buyables[13].effect)}
+        if (player.l.upgrades.includes(14)) {gain = gain.pow(1.5)}
+        if (player.l.upgrades.includes(21)) {gain = gain.pow(tmp.l.upgrades[21].effect)}
+        if (player.l.upgrades.includes(22)) {gain = gain.pow(tmp.l.upgrades[22].effect)}
+        if (player.l.upgrades.includes(23)) {gain = gain.pow((Math.sin(player.l.progbar2)+1)*5)}
+        if (player.l.upgrades.includes(24)) {gain = gain.sqr()}
+        if (tmp.e.effect.gte(1)) {gain = gain.pow(tmp.e.effect)}
+        if (player.e.upgrades.includes(14)) {gain = gain.pow(tmp.e.upgrades[14].effect)}
+        if (player.l.upgrades.includes(11) && player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max)) {gain = gain.sqr()}
+        player.l.tauprod = gain
+    },
+    update(diff) {
+        if (player.q.upgrades.includes(65)) {player.l.tau = player.l.tau.add(player.l.tauprod.mul(diff))}
         if (player.l.upgrades.includes(12)) {
             player.l.min = new Decimal(0.4)
             player.l.max = new Decimal(0.6)
         }
         if (player.l.upgrades.includes(11) && player.l.progbar1.gte(0)) {
             player.l.progbar1 = player.l.progbar1.sub(diff*0.25)
-            if (player.l.progbar1.lt(0)) {
-                player.l.progbar1 = new Decimal(0)
-            }
+            if (player.l.progbar1.lt(0)) {player.l.progbar1 = new Decimal(0)}
         }
         if (player.l.upgrades.includes(13)) {
             let mult = 0.5
-            if (player.e.upgrades.includes(12)) {
-                mult *= 2
-            }
+            if (player.e.upgrades.includes(12)) {mult *= 2}
             player.l.progbar2 += diff * mult
         }
         if (player.l.upgrades.includes(15)) {
-            let gain = new Decimal(1e24).mul(player.l.tau.add(10).log10())
-            if (player.e.upgrades.includes(62)) {
-                gain = gain.mul(tmp.e.upgrades[62].effect)
-            }
+            let gain = (player.l.tau.add(10).log10().mul(1e24))
+            if (player.e.upgrades.includes(62)) {gain = gain.mul(tmp.e.upgrades[62].effect)}
             player.l.taueff = player.l.taueff.add(gain.mul(diff))
             player.l.taugain = gain
         }
@@ -837,9 +690,7 @@ addLayer("l", {
             title: "Lawful Good",
             display() {return `Currently: ${player.l.clickables[11] ? player.l.clickables[11] : "Inactive"}`},
             unlocked() {return player.l.unlocked},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[11] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[11] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.law = player.l.law.add(1)
@@ -851,9 +702,7 @@ addLayer("l", {
             title: "Lawful Neutral",
             display() {return `Currently: ${player.l.clickables[12] ? player.l.clickables[12] : "Inactive"}`},
             unlocked() {return player.q.upgrades.includes(55)},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[12] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[12] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.law = player.l.law.add(1)
@@ -865,9 +714,7 @@ addLayer("l", {
             title: "Lawful Evil",
             display() {return `Currently: ${player.l.clickables[13] ? player.l.clickables[13] : "Inactive"}`},
             unlocked() {return player.l.unlocked},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[13] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[13] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.law = player.l.law.add(1)
@@ -879,9 +726,7 @@ addLayer("l", {
             title: "Neutral Good",
             display() {return `Currently: ${player.l.clickables[21] ? player.l.clickables[21] : "Inactive"}`},
             unlocked() {return player.q.upgrades.includes(55)},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[21] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[21] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.neutral = player.l.neutral.add(1)
@@ -893,9 +738,7 @@ addLayer("l", {
             title: "True Neutral",
             display() {return `Currently: ${player.l.clickables[22] ? player.l.clickables[22] : "Inactive"}`},
             unlocked() {return player.q.upgrades.includes(55)},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[22] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[22] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.neutral = player.l.neutral.add(2)
@@ -906,9 +749,7 @@ addLayer("l", {
             title: "Neutral Evil",
             display() {return `Currently: ${player.l.clickables[23] ? player.l.clickables[23] : "Inactive"}`},
             unlocked() {return player.q.upgrades.includes(55)},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[23] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[23] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.neutral = player.l.neutral.add(1)
@@ -920,9 +761,7 @@ addLayer("l", {
             title: "Chaotic Good",
             display() {return `Currently: ${player.l.clickables[31] ? player.l.clickables[31] : "Inactive"}`},
             unlocked() {return player.l.unlocked},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[31] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[31] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.chaos = player.l.chaos.add(1)
@@ -934,9 +773,7 @@ addLayer("l", {
             title: "Chaotic Neutral",
             display() {return `Currently: ${player.l.clickables[32] ? player.l.clickables[32] : "Inactive"}`},
             unlocked() {return player.q.upgrades.includes(55)},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[32] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[32] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.chaos = player.l.chaos.add(1)
@@ -948,9 +785,7 @@ addLayer("l", {
             title: "Chaotic Evil",
             display() {return `Currently: ${player.l.clickables[33] ? player.l.clickables[33] : "Inactive"}`},
             unlocked() {return player.l.unlocked},
-            canClick() {
-                return player.l.alignments.lt(player.l.cap) && player.l.clickables[33] !== "Active"
-            },
+            canClick() {return player.l.alignments.lt(player.l.cap) && player.l.clickables[33] !== "Active"},
             onClick() {
                 player.l.alignments = player.l.alignments.add(1)
                 player.l.chaos = player.l.chaos.add(1)
@@ -981,14 +816,12 @@ addLayer("l", {
     challenges: {
         11: {
             name: "Type-1",
-            challengeDescription: "Lepton's effect is square rooted.",
+            challengeDescription: "Lepton's effect ^0.5.",
             goalDescription: "983,000 points per second",
             canComplete() {return getPointGen().gte(983000)},
-            rewardDescription: "The lepton effect is multiplied by 1.25.",
+            rewardDescription: "Lepton effect's is multiplied by 1.25.",
             unlocked() {return player.q.upgrades.includes(45)},
-            onEnter() {
-                player.points = new Decimal(0)
-            }
+            onEnter() {player.points = new Decimal(0)}
         },
         12: {
             name: "Type-2",
@@ -997,9 +830,7 @@ addLayer("l", {
             canComplete() {return player.points.gte(500000000)},
             rewardDescription: "Base point gain x6.9e69",
             unlocked() {return player.l.challenges[11] === 1},
-            onEnter() {
-                player.points = new Decimal(0)
-            }
+            onEnter() {player.points = new Decimal(0)}
         },
         13: {
             name: "Type-3",
@@ -1008,20 +839,16 @@ addLayer("l", {
             canComplete() {return player.points.gte(100000)},
             rewardDescription: "You can choose one more alignment",
             unlocked() {return player.l.challenges[12] === 1},
-            onEnter() {
-                player.points = new Decimal(0)
-            }
+            onEnter() {player.points = new Decimal(0)}
         },
         21: {
             name: "Type-4",
             challengeDescription: "Neutrality does nothing and point gain after simulation log ^^0.25.",
             goalDescription: "5,400 points per second",
             canComplete() {return getPointGen().gte(5400)},
-            rewardDescription: "Point gain ^lepton effect",
+            rewardDescription: "Point gain ^lepton's effect",
             unlocked() {return player.q.upgrades.includes(61)},
-            onEnter() {
-                player.points = new Decimal(0)
-            }
+            onEnter() {player.points = new Decimal(0)}
         }
     },
     buyables: {
@@ -1087,20 +914,16 @@ addLayer("l", {
             title: "Generic Button #0",
             cost() {return new Decimal(0)},
             display() {
-                return `This button does stuff to the bars below. Read those for actual information. (Hold down the button for at least 0.25s for stuff to happen)`
+                return "This button does stuff to the bars below. Read those for actual information. (Hold down the button for at least 0.25s for stuff to happen)"
             },
             unlocked() {return player.l.upgrades.includes(11)},
             canAfford() {return true},
             buy() {
                 if (player.l.progbar1.lt(1)) {
                     player.l.progbar1 = player.l.progbar1.add(0.025)
-                    if (player.l.progbar1.gt(1)) {
-                        player.l.progbar1 = new Decimal(1)
-                    }
+                    if (player.l.progbar1.gt(1)) {player.l.progbar1 = new Decimal(1)}
                 }
-                if (player.l.upgrades.includes(13)) {
-                    player.l.progbar2 -= 0.0175
-                }
+                if (player.l.upgrades.includes(13)) {player.l.progbar2 -= 0.0175}
             },
             style: {"height": "125px", "width": "125px"}
         }
@@ -1113,9 +936,7 @@ addLayer("l", {
                 Cost: 10,000,000 tau particles`
             },
             canAfford() {return player.l.tau.gte(10000000)},
-            pay() {
-                player.l.tau = player.l.tau.sub(10000000)
-            }
+            pay() {player.l.tau = player.l.tau.sub(10000000)}
         },
         12: {
             fullDisplay() {
@@ -1125,9 +946,7 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(11)},
             canAfford() {return player.l.tau.gte(1e20)},
-            pay() {
-                player.l.tau = player.l.tau.sub(1e20)
-            }
+            pay() {player.l.tau = player.l.tau.sub(1e20)}
         },
         13: {
             fullDisplay() {
@@ -1137,9 +956,7 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(12)},
             canAfford() {return player.l.tau.gte(1e26)},
-            pay() {
-                player.l.tau = player.l.tau.sub(1e26)
-            }
+            pay() {player.l.tau = player.l.tau.sub(1e26)}
         },
         14: {
             fullDisplay() {
@@ -1149,9 +966,7 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(13)},
             canAfford() {return player.l.tau.gte(1e42)},
-            pay() {
-                player.l.tau = player.l.tau.sub(1e42)
-            }
+            pay() {player.l.tau = player.l.tau.sub(1e42)}
         },
         15: {
             fullDisplay() {
@@ -1161,9 +976,7 @@ addLayer("l", {
             },
             unlocked() {return player.l.upgrades.includes(14)},
             canAfford() {return player.l.tau.gte(1e75)},
-            pay() {
-                player.l.tau = player.l.tau.sub(1e75)
-            }
+            pay() {player.l.tau = player.l.tau.sub(1e75)}
         },
         21: {
             fullDisplay() {
@@ -1184,7 +997,7 @@ addLayer("l", {
                 Req: 2.5e348 tau particles<br>
                 Currently: ^${format(tmp.l.upgrades[22].effect, 2)}`
             },
-            effect() {return player.l.tau.add(10).log10().add(9).log(10)},
+            effect() {return player.l.tau.add(1).log10().add(10).log(10)},
             unlocked() {return player.l.upgrades.includes(21)},
             canAfford() {return player.l.tau.gte("2.5e348")},
             pay() {return}
@@ -1226,9 +1039,7 @@ addLayer("l", {
             width: 200,
             height: 50,
             progress() {return player.l.progbar1},
-            display() {
-                return `Currently: ${format(player.l.progbar1.mul(100), 2)}%`
-            },
+            display() {return `Currently: ${format(player.l.progbar1.mul(100), 2)}%`},
             fillStyle() {return player.l.progbar1.gte(player.l.min) && player.l.progbar1.lte(player.l.max) ? {"background-color": "#77bf5f", "transition-duration": "0.25s"} : {"background-color": "#ffffff", "transition-duration": "0.25s"}},
             textStyle: {"color": "#888888"},
             unlocked() {return player.l.upgrades.includes(11)}
@@ -1238,9 +1049,7 @@ addLayer("l", {
             width: 200,
             height: 50,
             progress() {return (Math.sin(player.l.progbar2)+1)/2},
-            display() {
-                return `Currently: ${format((Math.sin(player.l.progbar2)+1)*5, 2)}x`
-            },
+            display() {return `Currently: ${format((Math.sin(player.l.progbar2)+1)*5, 2)}x`},
             textStyle: {"color": "#888888"},
             unlocked() {return player.l.upgrades.includes(13)}
         }
@@ -1258,7 +1067,7 @@ addLayer("l", {
                         You have <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${player.l.good}</h2> good, which is multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[3], 2)}</h2><br>
                         You have <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${player.l.evil}</h2> evil, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[4], 2)}</h2>th power<br>`
                         if (player.q.upgrades.includes(55)) {
-                            str += `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[5], 2)}</h2>th power, 
+                            str += `You have <h2 style='color: #654321; text-shadow: #654321 0px 0px 10px'>${player.l.neutral}</h2> neutrality, which is raising point gain to the <h2 style='color: #444444; text-shadow: #444444 0px 0px 10px'>${format(tmp.l.effect[5], 2)}</h2>th power,
                             multiplying quark requirement's second exponent by <h2 style='color: #cccccc; text-shadow: #cccccc 0px 0px 10px'>${format(tmp.l.effect[6], 2)}</h2> and raising up quark's effect to the <h2 style='color: #ffffff; text-shadow: #ffffff 0px 0px 10px'>${format(tmp.l.effect[7], 2)}</h2>th power<br>`
                         }
                         str += `You can have ${player.l.cap} alignments at a time`
@@ -1316,7 +1125,7 @@ addLayer("l", {
                     "display-text",
                     function() {
                         if (player.l.upgrades.includes(13)) {
-                            return `The bar fluctuates between 0x and 10x to base tau gain. Holding the button down will slow down the fluctuation.`
+                            return "The bar fluctuates between 0x and 10x to base tau gain. Holding the button down will slow down the fluctuation."
                         }
                     }
                 ],
@@ -1331,7 +1140,7 @@ addLayer("a", {
     name: "atoms",
     startData() {return {
         unlocked: false,
-		points: new Decimal(0),
+        points: new Decimal(0),
         best: new Decimal(0)
     }},
     color: "#420420",
@@ -1341,21 +1150,20 @@ addLayer("a", {
         {
             key: "a",
             description: "a: reset your points for atoms",
-            onPress() { if (player.a.unlocked && canReset("a")) doReset("a") }
+            onPress() {if (player.a.unlocked && canReset("a")) doReset("a")}
         }
     ],
+    style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     effect() {
-        let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2))))
-        if (eff.gte(0.009999)) {
-            eff = new Decimal(0.009999)
-        }
+        let eff = new Decimal(0.01).sub(new Decimal(0.01).div(player.a.points.add(1).pow(player.a.points.add(1).mul(2)))).max(0.009999)
         return eff
     },
-    effectDescription() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)}`},
+    effectDescription() {return `which are reducing down quarks' softcap's log base by ${tmp.a.effect.toPrecision(4)} ${tmp.a.effect.lte(0.009999) ? "(hardcapped)" : ""}`},
     layerShown() {return player.q.upgrades.includes(35) || player.a.unlocked},
     symbol: "A",
     position: 0,
     branches: ["q", "l"],
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     type: "static",
     baseResource: "points",
     baseAmount() {return player.points},
@@ -1394,12 +1202,8 @@ addLayer("a", {
             },
             effect() {
                 let eff = player.l.resetTime/100+1.01
-                if (player.a.upgrades.includes(12)) {
-                    eff += 0.24
-                }
-                if (player.a.upgrades.includes(13)) {
-                    eff += 0.5
-                }
+                if (player.a.upgrades.includes(12)) {eff += 0.24}
+                if (player.a.upgrades.includes(13)) {eff += 0.5}
                 return new Decimal(eff).min(2)
             },
             unlocked() {return player.q.upgrades.includes(52)},
@@ -1409,7 +1213,7 @@ addLayer("a", {
         12: {
             fullDisplay() {
                 return `<h3>Lowtrogen</h3><br>
-                Hightrogen's effect starts at 1.25 and neutrality's first effect is squared.<br>
+                Hightrogen's effect starts at 1.25 and neutrality's first effect ^2.<br>
                 Req: 575,000,000 points per second in a Type-1 simulation`
             },
             unlocked() {return player.a.upgrades.includes(11)},
@@ -1445,7 +1249,8 @@ addLayer("a", {
                 Req: 3,207 quarks`
             },
             effect() {
-                let eff = new Decimal(2).mul(tmp.u.effect[1])
+                let eff = new Decimal(2)
+                if (player.u.unlocked) {eff = eff.mul(tmp.u.effect[1])}
                 return eff
             },
             unlocked() {return player.a.upgrades.includes(14)},
@@ -1458,7 +1263,7 @@ addLayer("u", {
     name: "unoriginality",
     startData() {return {
         unlocked: false,
-		points: new Decimal(0),
+        points: new Decimal(0),
         best: new Decimal(0),
         exp: new Decimal(0)
     }},
@@ -1469,19 +1274,16 @@ addLayer("u", {
         {
             key: "u",
             description: "u: reset your points for unoriginality",
-            onPress() { if (player.a.unlocked && canReset("u")) doReset("u") }
+            onPress() {if (player.a.unlocked && canReset("u")) doReset("u")}
         }
     ],
+    style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     effect() {
         let eff0 = player.u.points.add(10).log10()
         let eff1 = new Decimal(1)
-        if (player.u.exp.gte(1)) {
-            eff1 = new Decimal(0.01).mul(player.u.points.add(2).log2()).mul(player.u.exp).add(1)
-        }
+        if (player.u.exp.gte(1)) {eff1 = player.u.points.add(2).log2().mul(0.01).mul(player.u.exp).add(1)}
         let eff2 = new Decimal(1)
-        if (player.u.exp.gte(10)) {
-            eff2 = new Decimal(0.01).mul(player.u.points.add(2).log10()).mul(player.u.exp).add(1)
-        }
+        if (player.u.exp.gte(10)) {eff2 = player.u.points.add(2).log10().mul(0.01).mul(player.u.exp).add(1)}
         return [eff0, eff1, eff2]
     },
     effectDescription() {return `which is raising point gain to the ${format(tmp.u.effect[0], 4)}th power`},
@@ -1489,6 +1291,7 @@ addLayer("u", {
     symbol: "U",
     position: 1,
     branches: ["q", "l"],
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     type: "static",
     baseResource: "points",
     baseAmount() {return player.points},
@@ -1498,24 +1301,12 @@ addLayer("u", {
     resetsNothing() {return player.u.milestones.includes("7")},
     unExp() {
         let exp = new Decimal(0)
-        if (player.u.milestones.includes("1")) {
-            exp = exp.add(1)
-        }
-        if (player.q.buyables[21].gte(1)) {
-            exp = exp.add(tmp.q.buyables[21].effect)
-        }
-        if (player.q.upgrades.includes(61)) {
-            exp = exp.add(0.5)
-        }
-        if (player.q.upgrades.includes(63)) {
-            exp = exp.add(0.36)
-        }
-        if (player.q.upgrades.includes(62)) {
-            exp = exp.mul(3.14)
-        }
-        if (player.q.upgrades.includes(64)) {
-            exp = exp.add(0.01)
-        }
+        if (player.u.milestones.includes("1")) {exp = exp.add(1)}
+        if (player.q.buyables[21].gte(1)) {exp = exp.add(tmp.q.buyables[21].effect)}
+        if (player.q.upgrades.includes(61)) {exp = exp.add(0.5)}
+        if (player.q.upgrades.includes(63)) {exp = exp.add(0.36)}
+        if (player.q.upgrades.includes(62)) {exp = exp.mul(3.14)}
+        if (player.q.upgrades.includes(64)) {exp = exp.add(0.01)}
         player.u.exp = exp
     },
     milestones: {
@@ -1601,7 +1392,7 @@ addLayer("u", {
         14: {
             fullDisplay() {
                 return `<h3>[add witty upgrade name here]</h3><br>
-                Strange quark's negative effect is square rooted.<br>
+                Strange quark's negative effect ^0.5.<br>
                 Req: 305,000 points per second in a Type-3 simulation`
             },
             unlocked() {return player.u.upgrades.includes(13)},
@@ -1626,12 +1417,12 @@ addLayer("u", {
         [
             "display-text",
             function() {
-                let str = `Unoriginality exponent effects:<br>
-                <h3>Unoriginaltrogen</h3>'s second effect x${format(tmp.u.effect[1], 4)}<br>`
-                if (player.u.exp.gte(10)) {
-                    str += `<h3>This is even more unoriginal</h3>'s effect x${format(tmp.u.effect[2], 4)}<br>`
+                if (player.u.exp.gte(1)) {
+                    let str = `Unoriginality exponent effects:<br>
+                    <h3 style='color: #420420; text-shadow: #ffffff 0px 0px 10px'>Unoriginaltrogen</h3>'s second effect x${format(tmp.u.effect[1], 4)}`
+                    if (player.u.exp.gte(10)) {str += `<br><h3 style='color: #234567; text-shadow: #ffffff 0px 0px 10px'>This is even more unoriginal</h3>'s effect x${format(tmp.u.effect[2], 4)}`}
+                    return str
                 }
-                if (player.u.exp.gte(1)) {return str}
             }
         ],
         "milestones",
@@ -1642,7 +1433,7 @@ addLayer("e", {
     name: "electrons",
     startData() {return {
         unlocked: true,
-		points: new Decimal(0),
+        points: new Decimal(0),
         best: new Decimal(0),
         softcap_mult: new Decimal(10),
         button1: {
@@ -1678,6 +1469,7 @@ addLayer("e", {
     color: "#224488",
     row: 3,
     resource: "electrons",
+    style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
     effect() {
         let eff = player.e.points.add(1).log10()
         let softcap = player.e.softcap_mult
@@ -1689,138 +1481,83 @@ addLayer("e", {
     },
     layerShown() {return player.l.upgrades.includes(25)},
     symbol: "E",
-    position: 1,
+    position: 0,
     branches: ["a", "u"],
-    tooltip: "",
-    glowColor() {
-        for ([key, value] of Object.entries(tmp.e.upgrades)) {
-            if (value.canAfford && !(player.e.upgrades.includes(key))) {
-                return "#0000ff"
-            }
-        }
-        return false
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
+    tooltip() {
+        let minigames = 1
+        if (player.e.upgrades.includes(15)) {minigames += 1}
+        if (player.e.upgrades.includes(35)) {minigames += 1}
+        if (player.e.upgrades.includes(65)) {minigames += 1}
+        return `${minigames} tasks`
     },
-    type: "normal",
-    baseResource: "",
-    baseAmount: new Decimal(1),
-    requires: new Decimal(0),
+    button1() {
+        if (player.e.button1.bar.gt(1)) {player.e.button1.bar = new Decimal(0)}
+        if (player.e.upgrades.includes(11)) {
+            player.e.button1.min = new Decimal(0.35)
+            player.e.button1.max = new Decimal(0.65)
+        }
+        if (player.e.upgrades.includes(32)) {player.e.button1.keep = new Decimal(0.91)}
+        if (player.e.upgrades.includes(32)) {player.e.button1.keep = new Decimal(0.93)}
+        let eff = player.e.button1.best.add(1).log10()
+        if (player.e.upgrades.includes(32)) {eff = eff.pow(1.5)}
+        if (player.e.upgrades.includes(13)) {eff = eff.pow(10)}
+        player.e.button1.eff = eff
+    },
+    button2() {
+        player.e.button2.ng = new Decimal(69420).sub(tmp.e.buyables[171].effect)
+        let timeff = player.e.button2.time.add(2).log2()
+        if (player.e.upgrades.includes(22)) {timeff = timeff.sqr()}
+        if (player.e.upgrades.includes(24)) {timeff = timeff.sqr()}
+        player.e.button2.timeff = timeff
+    },
+    button3() {
+        let ptower = new Decimal(1)
+        if (player.e.upgrades.includes(41)) {ptower = ptower.add(1)}
+        if (player.e.upgrades.includes(42)) {ptower = ptower.add(tmp.e.upgrades[42].effect)}
+        if (player.e.upgrades.includes(43)) {ptower = ptower.add(tmp.e.upgrades[43].effect)}
+        if (player.e.upgrades.includes(44)) {ptower = ptower.add(tmp.e.upgrades[44].effect)}
+        if (player.e.upgrades.includes(73)) {ptower = ptower.add(player.e.final.eff.add(1).log10().sqrt().add(1).log10().sqrt())}
+        if (player.e.upgrades.includes(82)) {ptower = ptower.mul(2)}
+        player.e.button3.ptower = ptower
+    },
+    button4() {
+        let gain = player.q.points.mul(player.l.points).mul(player.a.points).mul(player.u.points).mul(player.e.final.time)
+        if (player.e.upgrades.includes(71)) {gain = gain.mul(player.l.law.add(1)).mul(player.l.chaos.add(1)).mul(player.l.good.add(1)).mul(player.l.evil.add(1)).mul(player.l.neutral.add(1))}
+        player.e.final.eff = gain
+    },
     update(diff) {
         // button 1
         if (player.e.unlocked) {
             player.e.button1.bar = player.e.button1.bar.add(player.e.button1.bpm.div(60).mul(diff))
-            if (player.e.button1.bar.gt(1)) {
-                player.e.button1.bar = new Decimal(0)
-            }
-            if (player.e.upgrades.includes(11)) {
-                player.e.button1.min = new Decimal(0.35)
-                player.e.button1.max = new Decimal(0.65)
-            }
-            if (player.e.upgrades.includes(32)) {
-                player.e.button1.keep = new Decimal(0.91)
-            }
-            if (player.e.upgrades.includes(32)) {
-                player.e.button1.keep = new Decimal(0.93)
-            }
-            let eff1 = player.e.button1.best.add(1).log10()
-            if (player.e.upgrades.includes(32)) {
-                eff1 = eff1.pow(1.5)
-            }
-            if (player.e.upgrades.includes(13)) {
-                eff1 = eff1.pow(10)
-            }
-            player.e.button1.eff = eff1
-            player.e.buyables[11] = player.e.buyables[11].add(eff1.mul(diff))
-            
+            player.e.buyables[11] = player.e.buyables[11].add(player.e.button1.eff.mul(diff))
             if (player.e.upgrades.includes(102) && player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max)) {
                 player.e.button1.combo = player.e.button1.combo.mul(new Decimal(1.1).pow(diff))
-                if (player.e.upgrades.includes(103)) {
-                    player.e.button1.combo = player.e.button1.combo.mul(new Decimal(2).pow(diff))
-                }
+                if (player.e.upgrades.includes(103)) {player.e.button1.combo = player.e.button1.combo.mul(new Decimal(2).pow(diff))}
             }
-            if (player.e.upgrades.includes(104)) {
-                player.e.button1.combo = player.e.button1.combo.mul(new Decimal(2).pow(diff))
-            }
-            if (player.e.button1.combo.gt(player.e.button1.best)) {
-                player.e.button1.best = player.e.button1.combo
-            }
+            if (player.e.upgrades.includes(104)) {player.e.button1.combo = player.e.button1.combo.mul(new Decimal(2).pow(diff))}
+            player.e.button1.best = player.e.button1.best.max(player.e.button1.combo)
         }
         // button 2
         if (player.e.upgrades.includes(15)) {
-            player.e.button2.ng = new Decimal(69420).sub(tmp.e.buyables[171].effect)
-            let timeff1 = player.e.button2.time.add(2).log2()
-            if (player.e.upgrades.includes(22)) {
-                timeff1 = timeff1.sqr()
-            }
-            if (player.e.upgrades.includes(24)) {
-                timeff1 = timeff1.sqr()
-            }
-            player.e.button2.timeff = timeff1
-            player.e.button2.neutrino = player.e.button2.neutrino.add(tmp.e.buyables[91].effect.mul(diff).mul(timeff1))
+            player.e.button2.neutrino = player.e.button2.neutrino.add(tmp.e.buyables[91].effect.mul(diff).mul(player.e.button2.timeff))
             player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[171].effect.mul(diff))
         }
-        // button 3
-        if (player.e.upgrades.includes(35)) {
-            let ptower = new Decimal(1)
-            if (player.e.upgrades.includes(41)) {
-                ptower = ptower.add(1)
-            }
-            if (player.e.upgrades.includes(42)) {
-                ptower = ptower.add(tmp.e.upgrades[42].effect)
-            }
-            if (player.e.upgrades.includes(43)) {
-                ptower = ptower.add(tmp.e.upgrades[43].effect)
-            }
-            if (player.e.upgrades.includes(44)) {
-                ptower = ptower.add(tmp.e.upgrades[44].effect)
-            }
-            if (player.e.upgrades.includes(73)) {
-                ptower = ptower.add(player.e.final.eff.add(1).log10().sqrt().add(1).log10().sqrt())
-            }
-            if (player.e.upgrades.includes(82)) {
-                ptower = ptower.mul(2)
-            }
-            player.e.button3.ptower = ptower
-        }
         // button 4
-        if (player.e.upgrades.includes(65)) {
-            let gain = player.q.points.mul(player.l.points).mul(player.a.points).mul(player.u.points).mul(player.e.final.time)
-            if (player.e.upgrades.includes(71)) {
-                gain = gain.mul(player.l.law.add(1)).mul(player.l.chaos.add(1)).mul(player.l.good.add(1)).mul(player.l.evil.add(1)).mul(player.l.neutral.add(1))
-            }
-            player.e.final.eff = gain
-            player.e.buyables[41] = player.e.buyables[41].add(gain.mul(diff))
-        }
+        if (player.e.upgrades.includes(65)) {player.e.buyables[41] = player.e.buyables[41].add(player.e.final.eff.mul(diff))}
         // dimensions
-        if (player.e.buyables[11].gte(1)) {
-            player.e.points = player.e.points.add(tmp.e.buyables[11].effect.mul(diff))
-        }
-        if (player.e.buyables[21].gte(1)) {
-            player.e.buyables[11] = player.e.buyables[11].add(tmp.e.buyables[21].effect.mul(diff))
-        }
-        if (player.e.buyables[31].gte(1)) {
-            player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[31].effect.mul(diff))
-        }
-        if (player.e.buyables[41].gte(1)) {
-            player.e.buyables[31] = player.e.buyables[31].add(tmp.e.buyables[41].effect.mul(diff))
-        }
-        if (player.e.upgrades.includes(83)) {
-            player.e.buyables[41] = player.e.buyables[41].pow(new Decimal(1.05).pow(diff))
-        }
+        if (player.e.buyables[11].gte(1)) {player.e.points = player.e.points.add(tmp.e.buyables[11].effect.mul(diff))}
+        if (player.e.buyables[21].gte(1)) {player.e.buyables[11] = player.e.buyables[11].add(tmp.e.buyables[21].effect.mul(diff))}
+        if (player.e.buyables[31].gte(1)) {player.e.buyables[21] = player.e.buyables[21].add(tmp.e.buyables[31].effect.mul(diff))}
+        if (player.e.buyables[41].gte(1)) {player.e.buyables[31] = player.e.buyables[31].add(tmp.e.buyables[41].effect.mul(diff))}
+        if (player.e.upgrades.includes(83)) {player.e.buyables[41] = player.e.buyables[41].pow(new Decimal(1.05).pow(diff))}
         // neutrino dimensions
-        if (player.e.buyables[101].gte(1)) {
-            player.e.buyables[91] = player.e.buyables[91].add(tmp.e.buyables[101].effect.mul(diff))
-        }
-        if (player.e.buyables[111].gte(1)) {
-            player.e.buyables[101] = player.e.buyables[101].add(tmp.e.buyables[111].effect.mul(diff))
-        }
-        if (player.e.buyables[121].gte(1)) {
-            player.e.buyables[111] = player.e.buyables[111].add(tmp.e.buyables[121].effect.mul(diff))
-        }
+        if (player.e.buyables[101].gte(1)) {player.e.buyables[91] = player.e.buyables[91].add(tmp.e.buyables[101].effect.mul(diff))}
+        if (player.e.buyables[111].gte(1)) {player.e.buyables[101] = player.e.buyables[101].add(tmp.e.buyables[111].effect.mul(diff))}
+        if (player.e.buyables[121].gte(1)) {player.e.buyables[111] = player.e.buyables[111].add(tmp.e.buyables[121].effect.mul(diff))}
         // softcap
         softcap = new Decimal(10)
-        if (player.e.upgrades.includes(84)) {
-            softcap = softcap.add(1)
-        }
+        if (player.e.upgrades.includes(84)) {softcap = softcap.add(1)}
         player.e.softcap_mult = softcap
     },
     buyables: {
@@ -1893,34 +1630,19 @@ addLayer("e", {
             cost() {return new Decimal(1).mul(new Decimal(10).pow(player.e.buyables[91]))},
             effect() {
                 let gain = player.e.buyables[91]
-                let pow = new Decimal(1).div(player.e.button2.ng)
-                if (player.e.upgrades.includes(21)) {
-                    pow = pow.pow(0.1)
-                }
-                if (player.e.upgrades.includes(24)) {
-                    pow = pow.pow(0.5)
-                }
+                let pow = player.e.button2.ng.pow(-1)
+                if (player.e.upgrades.includes(21)) {pow = pow.pow(0.1)}
+                if (player.e.upgrades.includes(24)) {pow = pow.pow(0.5)}
                 let mult = new Decimal(1)
-                if (player.e.upgrades.includes(53)) {
-                    mult = mult.mul(tmp.e.upgrades[53].effect)
-                }
-                if (player.e.upgrades.includes(63)) {
-                    mult = mult.mul(tmp.e.upgrades[63].effect)
-                }
-                if (player.e.upgrades.includes(73)) {
-                    mult = mult.mul(player.e.button3.energy.slog())
-                }
-                if (player.e.upgrades.includes(92)) {
-                    mult = mult.mul(tmp.e.buyables[91].cost.add(10).log10())
-                }
+                if (player.e.upgrades.includes(53)) {mult = mult.mul(tmp.e.upgrades[53].effect)}
+                if (player.e.upgrades.includes(63)) {mult = mult.mul(tmp.e.upgrades[63].effect)}
+                if (player.e.upgrades.includes(73)) {mult = mult.mul(player.e.button3.energy.slog())}
+                if (player.e.upgrades.includes(92)) {mult = mult.mul(tmp.e.buyables[91].cost.add(10).log10())}
                 gain = gain.pow(pow).mul(mult)
                 if (tmp.e.buyables[91].effect.gte(1e55)) {
                     let pow2 = new Decimal(1/69)
                     let mult2 = new Decimal(1)
-                    
-                    if (player.e.upgrades.includes(93)) {
-                        mult2 = mult2.mul(tmp.e.buyables[171].effect)
-                    }
+                    if (player.e.upgrades.includes(93)) {mult2 = mult2.mul(tmp.e.buyables[171].effect)}
                     gain = new Decimal(1e55).mul(gain.div(1e55).pow(pow2)).mul(mult2)
                 }
                 return gain
@@ -1944,15 +1666,9 @@ addLayer("e", {
             cost() {return new Decimal(100).mul(new Decimal(1000).pow(player.e.buyables[101]))},
             effect() {
                 let gain = player.e.buyables[101]
-                if (player.e.upgrades.includes(52)) {
-                    gain = gain.mul(tmp.e.upgrades[52].effect)
-                }
-                if (player.e.upgrades.includes(54)) {
-                    gain = gain.mul(player.e.button2.timeff)
-                }
-                if (player.e.upgrades.includes(92)) {
-                    gain = gain.mul(tmp.e.buyables[101].cost.add(10).log10())
-                }
+                if (player.e.upgrades.includes(52)) {gain = gain.mul(tmp.e.upgrades[52].effect)}
+                if (player.e.upgrades.includes(54)) {gain = gain.mul(player.e.button2.timeff)}
+                if (player.e.upgrades.includes(92)) {gain = gain.mul(tmp.e.buyables[101].cost.add(10).log10())}
                 return gain
             },
             display() {
@@ -1974,12 +1690,8 @@ addLayer("e", {
             cost() {return new Decimal(1e4).mul(new Decimal(1e5).pow(player.e.buyables[111]))},
             effect() {
                 let gain = player.e.buyables[111]
-                if (player.e.upgrades.includes(92)) {
-                    gain = gain.mul(tmp.e.buyables[111].cost.add(10).log10())
-                }
-                if (player.e.upgrades.includes(94)) {
-                    gain = gain.mul(player.e.button2.timeff)
-                }
+                if (player.e.upgrades.includes(92)) {gain = gain.mul(tmp.e.buyables[111].cost.add(10).log10())}
+                if (player.e.upgrades.includes(94)) {gain = gain.mul(player.e.button2.timeff)}
                 return gain
             },
             display() {
@@ -2001,12 +1713,8 @@ addLayer("e", {
             cost() {return new Decimal(1e6).mul(new Decimal(1e7).pow(player.e.buyables[121]))},
             effect() {
                 let gain = player.e.buyables[121]
-                if (player.e.upgrades.includes(92)) {
-                    gain = gain.mul(tmp.e.buyables[121].cost.add(10).log10())
-                }
-                if (player.e.upgrades.includes(94)) {
-                    gain = gain.mul(player.e.button2.timeff)
-                }
+                if (player.e.upgrades.includes(92)) {gain = gain.mul(tmp.e.buyables[121].cost.add(10).log10())}
+                if (player.e.upgrades.includes(94)) {gain = gain.mul(player.e.button2.timeff)}
                 return gain
             },
             display() {
@@ -2027,19 +1735,13 @@ addLayer("e", {
             title: "Neutrino Buffers",
             cost() {
                 let base = new Decimal(1.5)
-                if (player.e.upgrades.includes(22)) {
-                    base = base.sub(0.25)
-                }
+                if (player.e.upgrades.includes(22)) {base = base.sub(0.25)}
                 return base.pow(base.pow(player.e.buyables[171]))
             },
             effect() {
                 let gain = player.e.buyables[171]
-                if (player.e.upgrades.includes(23)) {
-                    gain = gain.mul(50)
-                }
-                if (player.e.upgrades.includes(93)) {
-                    gain = gain.mul(20)
-                }
+                if (player.e.upgrades.includes(23)) {gain = gain.mul(50)}
+                if (player.e.upgrades.includes(93)) {gain = gain.mul(20)}
                 return gain.min(69419)
             },
             display() {
@@ -2070,66 +1772,30 @@ addLayer("e", {
             onClick() {
                 if (player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max)) {
                     let combo = player.e.button1.higgs.add(2).log2()
-                    if (player.e.upgrades.includes(11)) {
-                        combo = combo.add(1)
-                    }
-                    if (player.e.upgrades.includes(12)) {
-                        combo = combo.mul(2)
-                    }
-                    if (player.e.upgrades.includes(31)) {
-                        combo = combo.mul(tmp.e.upgrades[31].effect)
-                    }
-                    if (player.e.upgrades.includes(33)) {
-                        combo = combo.mul(tmp.e.upgrades[33].effect)
-                    }
-                    if (player.e.upgrades.includes(34)) {
-                        combo = combo.mul(tmp.e.upgrades[34].effect)
-                    }
-                    if (player.e.upgrades.includes(61) && player.e.button1.bar.gte(0.45) && player.e.button1.bar.lte(0.55)) {
-                        combo = combo.mul(10)
-                    }
-                    if (player.e.upgrades.includes(62)) {
-                        combo = combo.mul(player.e.button1.bar.mul(100))
-                    }
-                    if (player.e.upgrades.includes(64)) {
-                        combo = combo.mul(tmp.e.upgrades[64].effect)
-                    }
-                    if (player.e.upgrades.includes(73)) {
-                        combo = combo.mul(player.e.button2.neutrino.pow(0.1))
-                    }
-                    if (player.e.upgrades.includes(12)) {
-                        combo = combo.sqr()
-                    }
+                    if (player.e.upgrades.includes(11)) {combo = combo.add(1)}
+                    if (player.e.upgrades.includes(12)) {combo = combo.mul(2)}
+                    if (player.e.upgrades.includes(31)) {combo = combo.mul(tmp.e.upgrades[31].effect)}
+                    if (player.e.upgrades.includes(33)) {combo = combo.mul(tmp.e.upgrades[33].effect)}
+                    if (player.e.upgrades.includes(34)) {combo = combo.mul(tmp.e.upgrades[34].effect)}
+                    if (player.e.upgrades.includes(61) && player.e.button1.bar.gte(0.45) && player.e.button1.bar.lte(0.55)) {combo = combo.mul(10)}
+                    if (player.e.upgrades.includes(62)) {combo = combo.mul(player.e.button1.bar.mul(100))}
+                    if (player.e.upgrades.includes(64)) {combo = combo.mul(tmp.e.upgrades[64].effect)}
+                    if (player.e.upgrades.includes(73)) {combo = combo.mul(player.e.button2.neutrino.pow(0.1))}
+                    if (player.e.upgrades.includes(12)) {combo = combo.sqr()}
                     let bpm = new Decimal(1)
-                    if (player.e.upgrades.includes(12)) {
-                        bpm = bpm.add(0.5)
-                    }
-                    if (player.e.upgrades.includes(13)) {
-                        bpm = bpm.sub(0.75)
-                    }
+                    if (player.e.upgrades.includes(12)) {bpm = bpm.add(0.5)}
+                    if (player.e.upgrades.includes(13)) {bpm = bpm.sub(0.75)}
                     player.e.button1.higgs = player.e.button1.higgs.add(1)
                     player.e.button1.combo = player.e.button1.combo.add(combo)
                     player.e.button1.bpm = player.e.button1.bpm.add(bpm)
-                    if (player.e.upgrades.includes(101)) {
-                        player.e.button1.combo = player.e.button1.combo.mul(1.01)
-                    }
-                    if (player.e.button1.combo.gt(player.e.button1.best)) {
-                        player.e.button1.best = player.e.button1.combo
-                    }
-
-                    if (player.e.upgrades.includes(72)) {
-                        player.e.buyables[41] = player.e.buyables[41].mul(2)
-                    }
+                    if (player.e.upgrades.includes(101)) {player.e.button1.combo = player.e.button1.combo.mul(1.01)}
+                    if (player.e.upgrades.includes(72)) {player.e.buyables[41] = player.e.buyables[41].mul(2)}
                 }
                 else {
                     player.e.button1.higgs = new Decimal(0)
                     let keep = new Decimal(0.9)
-                    if (player.e.upgrades.includes(31)) {
-                        keep = keep.add(0.01)
-                    }
-                    if (player.e.upgrades.includes(61)) {
-                        keep = keep.add(0.02)
-                    }
+                    if (player.e.upgrades.includes(31)) {keep = keep.add(0.01)}
+                    if (player.e.upgrades.includes(61)) {keep = keep.add(0.02)}
                     player.e.button1.combo = player.e.button1.combo.mul(keep)
                     player.e.button1.bpm = new Decimal(10)
                 }
@@ -2165,33 +1831,18 @@ addLayer("e", {
                     let gain = new Decimal(Math.E).tetrate(player.e.button3.ptower).tetrate(fill)
                     player.e.button3.energy = player.e.button3.energy.add(gain)
                     let dims = fill
-                    if (player.e.upgrades.includes(42)) {
-                        dims = dims.mul(2)
-                    }
-                    if (player.e.upgrades.includes(43)) {
-                        dims = dims.pow(2)
-                    }
-                    if (player.e.upgrades.includes(44)) {
-                        dims = dims.tetrate(2)
-                    }
-                    if (player.e.upgrades.includes(64)) {
-                        dims = dims.mul(tmp.e.upgrades[64].effect)
-                    }
-                    if (player.e.upgrades.includes(41)) {
-                        player.e.buyables[31] = player.e.buyables[31].add(dims)
-                    }
-                    
-                    if (player.e.upgrades.includes(81)) {
-                        player.e.buyables[41] = player.e.buyables[41].pow(tmp.e.upgrades[81].effect)
-                    }
+                    if (player.e.upgrades.includes(42)) {dims = dims.mul(2)}
+                    if (player.e.upgrades.includes(43)) {dims = dims.pow(2)}
+                    if (player.e.upgrades.includes(44)) {dims = dims.tetrate(2)}
+                    if (player.e.upgrades.includes(64)) {dims = dims.mul(tmp.e.upgrades[64].effect)}
+                    if (player.e.upgrades.includes(41)) {player.e.buyables[31] = player.e.buyables[31].add(dims)}
+                    if (player.e.upgrades.includes(81)) {player.e.buyables[41] = player.e.buyables[41].pow(tmp.e.upgrades[81].effect)}
                 }
                 player.e.button3.bar = new Decimal(0)
             },
             onHold() {
                 let mult = new Decimal(1)
-                if (player.e.upgrades.includes(41)) {
-                    mult = mult.mul(3)
-                }
+                if (player.e.upgrades.includes(41)) {mult = mult.mul(3)}
                 player.e.button3.bar = player.e.button3.bar.add(new Decimal(0.01).mul(mult))
             },
             style: {"height": "200px", "width": "200px"}
@@ -2204,9 +1855,7 @@ addLayer("e", {
             },
             unlocked() {return player.e.upgrades.includes(65)},
             canClick() {return true},
-            onHold() {
-                player.e.final.time = player.e.final.time.add(0.05)
-            },
+            onHold() {player.e.final.time = player.e.final.time.add(0.05)},
             style: {"height": "200px", "width": "200px"}
         }
     },
@@ -2216,9 +1865,7 @@ addLayer("e", {
             width: 200,
             height: 50,
             progress() {return player.e.button1.bar},
-            display() {
-                return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`
-            },
+            display() {return `Currently: ${format(player.e.button1.bar.mul(100), 2)}%`},
             fillStyle() {return player.e.button1.bar.gte(player.e.button1.min) && player.e.button1.bar.lte(player.e.button1.max) ? {"background-color": "#77bf5f", "transition-duration": "0.1s"} : {"background-color": "#ffffff", "transition-duration": "0.1s"}},
             textStyle: {"color": "#888888"}
         },
@@ -2227,9 +1874,7 @@ addLayer("e", {
             width: 200,
             height: 50,
             progress() {return new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01)},
-            display() {
-                return `Currently: ${format(new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01).mul(100), 2)}%`
-            },
+            display() {return `Currently: ${format(new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01).mul(100), 2)}%`},
             fillStyle() {
                 let fill = new Decimal(100).pow(player.e.button3.bar).div(100).sub(0.01)
                 if (fill.lte(.5)) {return {"background-color": "#77bf5f", "transition-duration": "0.025s"}}
@@ -2577,7 +2222,7 @@ addLayer("e", {
         72: {
             fullDisplay() {
                 return `<h3>This is pretty boring ngl</h3><br>
-                Every successful collision doubles meta^2 dimensions.<br>
+                Every successful collision doubles meta^3 dimensions.<br>
                 Req: 5e13 meta^3 dimensions per second`
             },
             unlocked() {return player.e.upgrades.includes(71)},
@@ -2587,7 +2232,7 @@ addLayer("e", {
         73: {
             fullDisplay() {
                 return `<h3>Running out of good ideas</h3><br>
-                Meta^3 dimension gain power tower height, energy boosts neutrino gain and neutrinos boost higgs boson gain.<br>
+                Meta^3 dimension boost power tower height, energy boosts neutrino gain and neutrinos boost higgs boson gain.<br>
                 Req: e4.5e12 tau particles<br>
                 Currently: +${format(player.e.final.eff.add(1).log10().sqrt().add(1).log10().sqrt(), 2)}, x${format(player.e.button3.energy.slog(), 2)}, x${format(player.e.button2.neutrino.pow(0.1), 2)}`
             },
@@ -2634,7 +2279,7 @@ addLayer("e", {
                 Req: F6.500 electrons`
             },
             unlocked() {return player.e.upgrades.includes(81)},
-            canAfford() {return player.e.points.slog().gte(6.5)},
+            canAfford() {return player.e.points.gte("F6.5")},
             pay() {return}
         },
         83: {
@@ -2760,7 +2405,7 @@ addLayer("e", {
         105: {
             fullDisplay() {
                 return `<h3>It's just a matter of when</h3><br>
-                Unlock [not yet].<br>
+                Unlock abandoned layer ideas.<br>
                 Req: e100 higgs bosons`
             },
             unlocked() {return player.e.upgrades.includes(104)},
@@ -2775,7 +2420,7 @@ addLayer("e", {
                     "display-text",
                     function() {
                         return `You have <h2 style='color: #224488; text-shadow: #224488 0px 0px 10px'>${format(player.e.points, 2)}</h2> electrons<br>
-                        Your electrons are raising tau gain to the ${format(tmp.e.effect, 2)}th power<br>
+                        Your electrons are raising tau gain to the <h2 style='color: #224488; text-shadow: #224488 0px 0px 10px'>${format(tmp.e.effect, 2)}</h2>th power<br>
                         Softcap mult: Every time the electron effect reaches a power of <h3 style='color: #224488; text-shadow: #224488 0px 0px 10px'>${format(player.e.softcap_mult, 2)}</h3>, it is softcapped. (log10(effect))`
                     }
                 ],
@@ -2811,9 +2456,7 @@ addLayer("e", {
                             - You start with 1 dimension<br>
                             - Neutrino gain ^1/${format(player.e.button2.ng, 2)}<br>
                             - Multiplier per bought dimension, tickspeed, dimension shifts and boosts, and neutrino galaxies don't exist<br>`
-                            if (tmp.e.buyables[91].effect.gte(1e55)) {
-                                str += "- Neutrino gain ^1/69 after 1e55, including all multipliers from upgrades<br>"
-                            }
+                            if (tmp.e.buyables[91].effect.gte(1e55)) {str += "- Neutrino gain ^1/69 after 1e55, including all multipliers from upgrades<br>"}
                             str += `<br>You have ${format(player.e.button2.neutrino, 2)} neutrinos`
                             return str
                         }
@@ -2859,6 +2502,308 @@ addLayer("e", {
                 "blank",
                 ["clickable", 14],
                 ["upgrades", [7]],
+            ]
+        }
+    }
+})
+addLayer("ali", {
+    name: "abandoned layer ideas",
+    startData() {return {
+        unlocked: true,
+        points: new Decimal(0),
+        best: new Decimal(0),
+        devTime: new Decimal(0),
+        bestTime: new Decimal(0),
+        devReq: new Decimal(2),
+        timeMult: new Decimal(1),
+        aliGain: new Decimal(0),
+        motivation: new Decimal(1),
+        motiveGain: new Decimal(0.1),
+        motiveEff: new Decimal(1),
+        rest: false
+    }},
+    color: "#884422",
+    row: 3,
+    resource: "abandoned layer ideas",
+    style() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
+    effect() {
+        let eff = player.ali.points.add(1).slog()
+        return eff
+    },
+    layerShown() {return player.e.upgrades.includes(105)},
+    symbol: "ALI",
+    position: 1,
+    branches: ["a", "u"],
+    nodeStyle() {if (player.bruh) {return {"transform": `translate(${Math.sin(player.timePlayed)*100}px, ${Math.cos(player.timePlayed)*100}px)`}}},
+    devRequirement() {
+        let req = new Decimal(2)
+        let buyables = new Decimal(0)
+        for ([key, value] of Object.entries(player.ali.buyables)) {
+            buyables = buyables.add(value)
+        }
+        req = req.pow(new Decimal(2).pow(buyables))
+        player.ali.devReq = req
+    },
+    aliGain() {
+        let gain = new Decimal(0)
+        if (player.ali.buyables[11].gte(1)) {gain = new Decimal(1).mul(tmp.ali.buyables[11].effect)}
+        if (player.ali.buyables[12].gte(1)) {gain = gain.pow(tmp.ali.buyables[12].effect)}
+        if (player.ali.upgrades.includes(12)) {gain = gain.sqr()}
+        player.ali.aliGain = gain
+    },
+    devSpeed() {
+        let mult = new Decimal(1)
+        if (player.ali.upgrades.includes(11)) {mult = mult.mul(tmp.ali.upgrades[11].effect)}
+        if (player.ali.upgrades.includes(12)) {mult = mult.mul(tmp.ali.upgrades[12].effect)}
+        if (player.ali.upgrades.includes(13)) {mult = mult.mul(tmp.ali.upgrades[13].effect)}
+        if (player.ali.upgrades.includes(14)) {mult = mult.mul(tmp.ali.upgrades[14].effect)}
+        if (player.ali.upgrades.includes(15)) {mult = mult.mul(player.ali.motiveEff)}
+        if (player.ali.upgrades.includes(13)) {mult = mult.pow(tmp.ali.buyables[12].effect.pow(0.1))}
+        if (mult.gte(1e50)) mult = mult.log10().mul(2e48)
+        player.ali.timeMult = mult
+    },
+    motiveGain() {
+        let gain = new Decimal(0.1)
+        if (player.ali.buyables[13].gte(1)) {gain = gain.mul(tmp.ali.buyables[13].effect)}
+        if (player.ali.upgrades.includes(21)) {gain = gain.mul(player.ali.timeMult.pow(0.1))}
+        if (player.ali.upgrades.includes(22)) {gain = gain.mul(player.ali.timeMult.pow(0.2))}
+        if (player.ali.upgrades.includes(23)) {gain = gain.mul(player.ali.timeMult.pow(0.3))}
+        if (player.ali.upgrades.includes(24)) {gain = gain.mul(player.ali.timeMult.pow(0.2))}
+        player.ali.motiveGain = gain
+    },
+    motiveEffect() {
+        let eff = player.ali.motivation
+        player.ali.motiveEff = eff
+    },
+    update(diff) {
+        // dev
+        if (player.e.upgrades.includes(105) && !(player.ali.rest)) {player.ali.devTime = player.ali.devTime.add(player.ali.timeMult.mul(diff))}
+        player.ali.bestTime = player.ali.bestTime.max(player.ali.devTime)
+        // motiv
+        if (player.ali.rest) {player.ali.motivation = player.ali.motivation.add(player.ali.motiveGain.mul(diff))}
+        else if (player.ali.motivation.gte(1)) {
+            player.ali.motivation = player.ali.motivation.sub(diff*0.01)
+            if (player.ali.upgrades.includes(24)) player.ali.motivation = player.ali.motivation.mul(new Decimal(0.99).pow(diff))
+            if (player.ali.motivation.lt(1)) {player.ali.motivation = new Decimal(1)}
+        }
+    },
+    clickables: {
+        11: {
+            title: "Abandon this layer",
+            display() {
+                return `Abandon this layer, gaining abandoned layer ideas.
+                Currently: ${format(player.ali.aliGain, 2)} on reset`
+            },
+            canClick() {return player.ali.aliGain.gte(1)},
+            onClick() {
+                player.ali.points = player.ali.points.add(player.ali.aliGain)
+                player.ali.devTime = new Decimal(0)
+                for ([key, value] of Object.entries(player.ali.buyables)) {
+                    player.ali.buyables[key] = new Decimal(0)
+                }
+                player.ali.rest = false
+            }
+        },
+        12: {
+            title: "Rest",
+            display() {
+                return `Rest, stopping all development for this layer but gaining ${format(player.ali.motiveGain, 2)} motivation per second
+                Currently: ${player.ali.rest ? "Resting" : "Working"}`
+            },
+            unlocked() {return player.ali.upgrades.includes(15)},
+            canClick() {return player.ali.aliGain.gte(1) && !(player.ali.rest)},
+            onClick() {player.ali.rest = true}
+        }
+    },
+    buyables: {
+        11: {
+            title: "Make an upgrade",
+            cost() {return player.ali.devReq},
+            effect() {
+                let eff = new Decimal(2).pow(player.ali.buyables[11])
+                return eff
+            },
+            display() {
+                return `Multiplies abandoned layer idea gain on abandonment by 2 per buyable.
+                Req: ${formatDecimalTime(tmp.ali.buyables[11].cost)}
+                Currently: ${format(tmp.ali.buyables[11].effect, 2)}x
+                Amount: ${format(player.ali.buyables[11], 2)}`
+            },
+            canAfford() {return player.ali.devTime.gte(tmp.ali.buyables[11].cost)},
+            buy() {player.ali.buyables[11] = player.ali.buyables[11].add(1)}
+        },
+        12: {
+            title: "Make a milestone",
+            cost() {return player.ali.devReq},
+            effect() {
+                let eff = new Decimal(1.5).pow(player.ali.buyables[12])
+                return eff
+            },
+            display() {
+                return `Abandoned layer idea gain ^1.5 per buyable.
+                Req: ${formatDecimalTime(tmp.ali.buyables[12].cost)}
+                Currently: ^${format(tmp.ali.buyables[12].effect, 2)}
+                Amount: ${format(player.ali.buyables[12], 2)}`
+            },
+            unlocked() {return player.ali.upgrades.includes(11) && player.ali.buyables[11].gte(1)},
+            canAfford() {return player.ali.devTime.gte(tmp.ali.buyables[12].cost)},
+            buy() {player.ali.buyables[12] = player.ali.buyables[12].add(1)}
+        },
+        13: {
+            title: "Make a buyable",
+            cost() {return player.ali.devReq},
+            effect() {
+                let eff = new Decimal(1.5).pow(player.ali.buyables[13])
+                return eff
+            },
+            display() {
+                return `Motivation gain x1.5 per buyable.
+                Req: ${formatDecimalTime(tmp.ali.buyables[13].cost)}
+                Currently: x${format(tmp.ali.buyables[13].effect, 2)}
+                Amount: ${format(player.ali.buyables[13], 2)}`
+            },
+            unlocked() {return player.ali.upgrades.includes(21) && player.ali.buyables[12].gte(1)},
+            canAfford() {return player.ali.devTime.gte(tmp.ali.buyables[13].cost)},
+            buy() {player.ali.buyables[13] = player.ali.buyables[13].add(1)}
+        }
+    },
+    upgrades: {
+        11: {
+            fullDisplay() {
+                return `<h3>Irony</h3><br>
+                idk uhhh unlock a buyable and ALIs boost dev speed<br>
+                Req: 50 ALIs (change to full name later)<br>
+                Currently: x${format(tmp.ali.upgrades[11].effect, 2)}`
+            },
+            effect() {return player.ali.points.add(10).log10()},
+            canAfford() {return player.ali.points.gte(50)},
+            pay() {return}
+        },
+        12: {
+            fullDisplay() {
+                return `<h3>I'm bored and lazy</h3><br>
+                ALI gain ^2 and dev time boosts dev speed.<br>
+                Req: 100 ALIs<br>
+                Currently: x${format(tmp.ali.upgrades[12].effect, 2)}`
+            },
+            effect() {return player.ali.devTime.add(10).log10()},
+            unlocked() {return player.ali.upgrades.includes(11)},
+            canAfford() {return player.ali.points.gte(100)},
+            pay() {return}
+        },
+        13: {
+            fullDisplay() {
+                return `<h3>I'm lazy and bored</h3><br>
+                Best dev time boosts dev speed and the milestone effect ^0.1 applies to dev speed.<br>
+                Req: 10x dev speed<br>
+                Currently: x${format(tmp.ali.upgrades[13].effect, 2)}`
+            },
+            effect() {return player.ali.bestTime.add(10).log10()},
+            unlocked() {return player.ali.upgrades.includes(12)},
+            canAfford() {return player.ali.timeMult.gte(10)},
+            pay() {return}
+        },
+        14: {
+            fullDisplay() {
+                return `<h3>[insert actual upgrade name here]</h3><br>
+                Dev speed boosts dev speed.<br>
+                Req: 6,969 ALIs<br>
+                Currently: x${format(tmp.ali.upgrades[14].effect, 2)}`
+            },
+            effect() {return player.ali.timeMult.add(10).log10()},
+            unlocked() {return player.ali.upgrades.includes(13)},
+            canAfford() {return player.ali.points.gte(6969)},
+            pay() {return}
+        },
+        15: {
+            fullDisplay() {
+                return `<h3>I'm bored</h3><br>
+                Unlock motivation.<br>
+                Req: 20,000 ALIs`
+            },
+            unlocked() {return player.ali.upgrades.includes(14)},
+            canAfford() {return player.ali.points.gte(20000)},
+            pay() {return}
+        },
+        21: {
+            fullDisplay() {
+                return `<h3>qwertyuiop</h3><br>
+                Unlock a buyable and dev speed ^0.1 boosts motivation gain.<br>
+                Req: 200,000 ALIs`
+            },
+            unlocked() {return player.ali.upgrades.includes(15)},
+            canAfford() {return player.ali.points.gte(200000)},
+            pay() {return}
+        },
+        22: {
+            fullDisplay() {
+                return `<h3>zxcvbnm</h3><br>
+                Dev speed ^0.2 boosts motivation gain.<br>
+                Req: 200 motivation`
+            },
+            unlocked() {return player.ali.upgrades.includes(21)},
+            canAfford() {return player.ali.motivation.gte(200)},
+            pay() {return}
+        },
+        23: {
+            fullDisplay() {
+                return `<h3>qazwsxedcrfv</h3><br>
+                Dev speed ^0.3 boosts motivation gain.<br>
+                Req: 100y of dev time`
+            },
+            unlocked() {return player.ali.upgrades.includes(22)},
+            canAfford() {return player.ali.devTime.gte(3153600000)},
+            pay() {return}
+        },
+        24: {
+            fullDisplay() {
+                return `<h3>tgbyhnujmikolp</h3><br>
+                Dev speed ^0.2 boosts motivation gain but lose 1% of motivation per second when not resting.<br>
+                Req: 1e20 millenia of dev time`
+            },
+            unlocked() {return player.ali.upgrades.includes(23)},
+            canAfford() {return player.ali.devTime.gte(1e20*31536000)},
+            pay() {return}
+        },
+        25: {
+            fullDisplay() {
+                return `<h3>1234567890</h3><br>
+                Dev speed ^0.1 boosts motivation gain and unlock commits.<br>
+                Req: 1e42 motivation`
+            },
+            unlocked() {return player.ali.upgrades.includes(23)},
+            canAfford() {return player.ali.motivation.gte(1e42)},
+            pay() {return}
+        }
+    },
+    tabFormat: {
+        "Main": {
+            content: [
+                [
+                    "display-text",
+                    function() {
+                        return `You have <h2 style='color: #884422; text-shadow: #884422 0px 0px 10px'>${format(player.ali.points, 2)}</h2> adandoned layer ideas<br>
+                        Your adandoned layer ideas are raising point exponent to the <h2 style='color: #884422; text-shadow: #884422 0px 0px 10px'>${format(tmp.ali.effect, 2)}</h2>th power`
+                    }
+                ],
+                "blank",
+                "upgrades"
+            ]
+        },
+        "Dev": {
+            content: [
+                [
+                    "display-text",
+                    function() {
+                        let str = `You have been deving for <h2 style='color: #884422; text-shadow: #884422 0px 0px 10px'>${formatDecimalTime(player.ali.devTime)}</h2><br>
+                        You develop ${format(player.ali.timeMult, 2)}x faster than real time ${player.ali.timeMult.gte(1e50) ? "(softcapped)" : ""}<br>
+                        Each buyable squares dev time requirement`
+                        if (player.ali.upgrades.includes(15)) {str += `<br>You have ${format(player.ali.motivation, 2)} motivation, which is multiplying dev speed by ${format(player.ali.motiveEff, 2)}`}
+                        return str
+                    }
+                ],
+                "clickables",
+                "buyables"
             ]
         }
     }

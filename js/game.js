@@ -330,7 +330,7 @@ function autobuyUpgrades(layer){
 function gameLoop(diff) {
 	if (isEndgame() || gameEnded) gameEnded = 1
 
-	if (isNaN(diff)) diff = 0
+	if (isNaN(diff) || diff < 0) diff = 0
 	if (gameEnded && !player.keepGoing) {
 		diff = 0
 		player.tab = "gameEnded"
