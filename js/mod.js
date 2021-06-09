@@ -130,7 +130,7 @@ function getPointGen() {
 	if (player.a.upgrades.includes(15)) {gain = gain.pow(tmp.a.upgrades[15].effect)}
 	if (player.u.unlocked) {gain = gain.pow(tmp.u.effect[0])}
 	if (player.u.milestones.includes("5")) {gain = gain.pow(1.15)}
-	if (player.u.upgrades.includes(11)) {gain = gain.pow(tmp.q.buyables[13].effect[1].add(10).log10().add(9).log10())}
+	if (player.u.upgrades.includes(11)) {gain = gain.pow(tmp.q.buyables[13].effect[1].add(1).log10().add(10).log10())}
 	if (player.u.upgrades.includes(13)) {gain = gain.pow(new Decimal(0.99).pow(-0.99))}
 	if (player.l.challenges[21] === 1) {gain = gain.pow(tmp.l.effect[0])}
 	if (player.e.upgrades.includes(82)) {gain = gain.pow(player.e.button3.ptower)}
@@ -138,7 +138,7 @@ function getPointGen() {
 	if (player.q.buyables[13].gte(1)) {gain = gain.pow(tmp.q.buyables[13].effect[0]).mul(tmp.q.buyables[13].effect[1])}
 	if (player.l.upgrades.includes(15)) {gain = gain.mul(new Decimal(10).pow(player.l.taueff))}
 	if (player.l.activeChallenge === 12) {gain = gain.tetrate(0.1)}
-	if (!!(player.l.activeChallenge)) {gain = gain.log10()}
+	if (!!(player.l.activeChallenge)) {gain = gain.add(10).log10()}
 	if (player.l.activeChallenge === 13) {gain = gain.tetrate(0.5)}
 	if (player.l.activeChallenge === 21) {gain = gain.tetrate(0.25)} 
 	return gain
