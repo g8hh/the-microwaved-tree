@@ -2768,7 +2768,7 @@ addLayer("ali", {
         25: {
             fullDisplay() {
                 return `<h3>1234567890</h3><br>
-                Dev speed ^0.1 boosts motivation gain and unlock commits.<br>
+                Dev speed ^0.1 boosts motivation gain and unlock [next update].<br>
                 Req: 1e42 motivation`
             },
             unlocked() {return player.ali.upgrades.includes(23)},

@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.7",
-	name: "got 100 upgrades but originality aint one",
+	num: "0.8",
+	name: "oh god more update names fuck",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -75,10 +75,15 @@ let changelog = `<h1>Changelog:</h1><br>
 		- full combo<br>
 		- next up: meta<br>
 	<h3>v0.7</h3><br>
-		- meta^3 dimensions exist now now<br>
+		- meta^3 dimensions exist now<br>
 		- added stuff until 50th (thats a few more than i remembered) electron upgrade<br>
 		- im actually running out of ideas dont expect this to be updated for a while ill do smtn else<br>
-		- next up: how many people actually know what the og chemistree was please tell<br>`
+		- next up: how many people actually know what the og chemistree was please tell<br>
+	<h3>v0.8</h3><br>
+		- abandoned layer ideas exist now<br>
+		- added stuff until 10th ali upgrade<br>
+		- all mistakes are intentional except for the ones that arent<br>
+		- next up: a very funny thing<br>`
 
 let winText = `youre done pog`
 
