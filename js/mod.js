@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Chemistree 2",
+	name: "化学树2 - The Chemistree 2",
 	id: "chem2",
 	author: "micro",
 	pointsName: "points",
